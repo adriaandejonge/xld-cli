@@ -37,8 +37,11 @@ func create(args []string) (result string, err error) {
 	typeName := args[0]
 	//ciName := args[1]
 
-	ciType, _ := metadata.Type(typeName)
-	// TODO check for error
+	ciType, err := metadata.Type(typeName)
+	if err != nil {
+		return
+	}
+	
 
 
 
@@ -51,33 +54,69 @@ func create(args []string) (result string, err error) {
 
 	props := args[2:]
 	for _, prop := range props {
-		keyval := strings.SplitN(prop, "=", 2)
-		key := keyval[0]
-		value := keyval[1]
+		key, value := keyValue(prop, "=")
 		fmt.Println("key = ", key)
 		fmt.Println("value = ", value)
 		fmt.Println("prop = ", ciType.Prop(key))
 
-		// SWITCH ciType.Prop(key) - Type
+		kind := ciType.Prop(key).Kind
 
-		mapProps[key] = value
+		switch kind {
 
-		// let map entry depend on type
-		// switch? or OOP? (suggest start with switch)
+		case "BOOLEAN", "INTEGER", "STRING", "ENUM":
+			// TODO Check that this is correct
+			mapProps[key] = value
+		case "CI":
+			mapProps[key] = map[string]interface{}{"-ref": value}
+		case "MAP_STRING_STRING":
+			entry := make([]map[string]interface{}, 0)
 
+			kvPairs := strings.Split(value, " ")
+			for _, kvPair := range kvPairs {
+				k, v := keyValue(kvPair, ":")
+				entry = append(entry, map[string]interface{}{"-key": k, "#text": v})
+			}
+			mapProps[key] = map[string]interface{}{"entry": entry}
+		case "SET_OF_STRING", "LIST_OF_STRING":
+			values := strings.Split(value, ",")
+			// TODO filter spaces
+			// $.map() like function??? (wbn)
+			mapProps[key] = map[string]interface{}{"value": values}
+		case "SET_OF_CI", "LIST_OF_CI":
+			cis := make([]map[string]interface{}, 0)
+
+			ciRefs := strings.Split(value, ",")
+			for _, ref := range ciRefs {
+				cis = append(cis, map[string]interface{}{"-ref": ref})
+			}
+			mapProps[key] = map[string]interface{}{"ci": cis}
+
+		default:
+			// Should not get here
+			//return "error", errors.New("Unknown property type " + kind)
+			return "error", errors.New("Unknown property type " + ciType.Type + "->" + key)
+			
+		}
 	}
 
-	// create XML based on map
+	final := map[string]interface{}{"ciType.Type": mapProps}
 
-	// TODO: Clean up
-	fmt.Println("Props = ", mapProps)
-	fmt.Println("ciType =", ciType)
-	fmt.Println("arg 1 =", args[1])
-	fmt.Println("arg 2 =", args[2])
+
+	json, _ := j2x.MapToJson(final)
+	xml, _ := j2x.JsonToXml(json)
+
+	// TODO Clean Up:
+	fmt.Println("\n\n")
+	fmt.Println("XML = ", string(xml))
 
 	return
 }
 
+func keyValue(combined string, split string) (key string, value string) {
+	keyval := strings.SplitN(combined, split, 2)
+	return keyval[0], keyval[1]
+
+}
 
 // TODO Clean up if code is not needed as example anymore
 func repo() (result string, err error) {

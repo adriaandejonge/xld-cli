@@ -56,15 +56,15 @@ var shorthand = map[string]string{
 	"env": "udm.Environment",
 }
 
-func (ciType CIType) Prop(name string) Property {
+func (ciType *CIType) Prop(name string) Property {
 	if ciType.props == nil {
 		ciType.indexProps()
 	}
 	return ciType.props[name]
 }
 
-func (ciType CIType) indexProps() {
-	ciType.props = map[string]Property{}
+func (ciType *CIType) indexProps() {
+	ciType.props = make(map[string]Property)
 	for _, prop := range ciType.Properties {
 		ciType.props[prop.Name] = prop
 	}
