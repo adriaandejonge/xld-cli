@@ -6,7 +6,9 @@ import (
 	"bytes"
 	"github.com/adriaandejonge/xld/http"
 	"github.com/adriaandejonge/xld/metadata"
+	"github.com/adriaandejonge/xld/intf"
 	"github.com/clbanning/mxj/j2x"
+
 )
 
 var shorthand = map[string]string{
@@ -17,21 +19,21 @@ var shorthand = map[string]string{
 }
 
 
-func Do(args []string) (result string, err error) {
-
-	if len(args) < 1 {
+func Do(args intf.Command) (result string, err error) {
+	subs := args.Subs()
+	if len(subs) < 1 {
 		return "error", errors.New("xld repo expects at least 1 argument")
 	} else {
 		if err != nil {
 			return "error", err
 		}
 
-		switch args[0] {
+		switch args.Main() {
 		case "create":
-			return create(args[1:])
+			return create(args)
 
 		case "remove":
-			return remove(args[1:])
+			return remove(args)
 
 		default:
 			return "error", errors.New("Unknown command")
@@ -41,9 +43,10 @@ func Do(args []string) (result string, err error) {
 
 }
 
-func create(args []string) (result string, err error) {
-	typeName := args[0]
-	ciName := args[1]
+func create(args intf.Command) (result string, err error) {
+	subs := args.Subs()
+	typeName := subs[0]
+	ciName := subs[1]
 
 	ciType, err := metadata.Type(typeName)
 	if err != nil {
@@ -60,9 +63,11 @@ func create(args []string) (result string, err error) {
 
 	mapProps := make(map[string]interface{})
 
-	props := args[2:]
+	//props := args[2:]
+	props := args.Arguments()
 	for _, prop := range props {
-		key, value := keyValue(prop, "=")
+		//key, value := keyValue(prop, "=")
+		key := prop.Name()
 
 		kind := ciType.Prop(key).Kind
 
@@ -73,19 +78,19 @@ func create(args []string) (result string, err error) {
 		switch kind {
 
 		case "BOOLEAN", "INTEGER", "STRING", "ENUM":
-			mapProps[key] = value
+			mapProps[key] = prop.Value()
 
 		case "CI":
-			mapProps[key] = mapRef(value)
+			mapProps[key] = mapRef(prop.Value())
 			
 		case "MAP_STRING_STRING":
-			mapProps[key] = mapStringString(value)
+			mapProps[key] = mapStringString(prop.Map())
 
 		case "SET_OF_STRING", "LIST_OF_STRING":
-			mapProps[key] = mapSetOfStrings(value)
+			mapProps[key] = mapSetOfStrings(prop.Values())
 
 		case "SET_OF_CI", "LIST_OF_CI":
-			mapProps[key] = mapSetOfCis(value)
+			mapProps[key] = mapSetOfCis(prop.Values())
 
 		default:
 			return "error", errors.New("Unknown property kind " + kind + " --> XLD server newer than client?")
@@ -112,8 +117,9 @@ func create(args []string) (result string, err error) {
 	return string(body), err
 }
 
-func remove(args []string) (result string, err error) {
-	ciName := antiAbbreviate(args[0])
+func remove(args intf.Command) (result string, err error) {
+	subs := args.Subs()
+	ciName := antiAbbreviate(subs[0])
 
 	body, err := http.Delete("/repository/ci/" + ciName)
 
@@ -134,28 +140,23 @@ func antiAbbreviate(ciName string) string {
 	return ciName
 }
 
-func mapStringString(value string) interface{} {
+func mapStringString(kvPairs map[string]string) interface{} {
 	entry := make([]map[string]interface{}, 0)
 
-	kvPairs := strings.Split(value, " ")
-	for _, kvPair := range kvPairs {
-		k, v := keyValue(kvPair, ":")
+	for k, v := range kvPairs {
 		entry = append(entry, map[string]interface{}{"-key": k, "#text": v})
 	}
 	return map[string]interface{}{"entry": entry}
 }
 
-func mapSetOfStrings(value string) interface{} {
-	values := strings.Split(value, ",")
-	values = fnMap(&values, strings.TrimSpace)
+func mapSetOfStrings(values []string) interface{} {
 	return map[string]interface{}{"value": values}
 }
 
-func mapSetOfCis(value string) interface{} {
+func mapSetOfCis(values []string) interface{} {
 	cis := make([]map[string]interface{}, 0)
 
-	ciRefs := strings.Split(value, ",")
-	for _, ref := range ciRefs {
+	for _, ref := range values {
 		cis = append(cis, mapRef(strings.TrimSpace(ref)))
 	}
 	return map[string]interface{}{"ci": cis}
@@ -174,12 +175,4 @@ func keyValue(combined string, split string) (key string, value string) {
 
 }
 
-type strFn func(input string) string
 
-func fnMap(input *[]string, mapFunc strFn) (output []string) {
-	output = make([]string, 0)
-	for _, el := range *input {
-		output = append(output, mapFunc(el))
-	}
-	return
-}

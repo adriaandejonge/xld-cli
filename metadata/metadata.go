@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/adriaandejonge/xld/http"
+	"github.com/adriaandejonge/xld/intf"
 )
 
 type (
@@ -71,22 +72,23 @@ func (ciType *CIType) indexProps() {
 	}
 }
 
-func Do(args []string) (result string, err error) {
+func Do(args intf.Command) (result string, err error) {
 
-	if len(args) == 0 {
+	subs := args.Subs()
+	if len(subs) == 0 {
 		return "error", errors.New("xld metadata expects at least 1 argument")
 	} else {
 		if err != nil {
 			return "error", err
 		}
 
-		switch args[0] {
+		switch args.Main() {
 		case "types":
 			// TODO check nr of args again
 			return types()
 		case "describe":
 			// TODO check nr of args again
-			return describe(args[1])
+			return describe(subs[0])
 
 		// TODO orchestrators
 		// TODO permissions

@@ -6,24 +6,33 @@ import (
 	repo "github.com/adriaandejonge/xld/repository"
 	"github.com/adriaandejonge/xld/metadata"
 	"os"
+
+	"github.com/adriaandejonge/xld/cmd"
 )
 
 func main() {
-	fmt.Println("XL Deploy Command Line Alternative - EXPERIMENTAL v0.1")
-	fmt.Println("Created by Adriaan de Jonge - July, 2014")
+
+	args := cmd.ReadArgs(os.Args[1:])
+
+
 	var err error
 	var result string
 
-	switch os.Args[1] {
+	switch args.Main() {
 	case "login", "connect":
-		result, err = login.Do(os.Args[2:])
+		result, err = login.Do(args)
 	case "create", "update", "remove", "list":
-		result, err = repo.Do(os.Args[1:])
+		result, err = repo.Do(args)
 	case "types", "describe":
-		result, err = metadata.Do(os.Args[1:])
-	default:
-		fmt.Println("Command not recognized")
+		result, err = metadata.Do(args)
 
+	case "test":
+
+
+
+	default:
+		fmt.Println("XL Deploy Command Line Alternative - EXPERIMENTAL v0.1")
+		fmt.Println("Created by Adriaan de Jonge - July, 2014")
 
 	}
 	if err != nil {

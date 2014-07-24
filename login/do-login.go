@@ -9,16 +9,18 @@ import (
 	"os"
 	"os/user"
 	"strconv"
+	"github.com/adriaandejonge/xld/intf"
 )
 
-func Do(args []string) (result string, err error) {
+func Do(args intf.Command) (result string, err error) {
 
-	if len(args) != 3 {
+	subs := args.Subs()
+	if len(subs) != 3 {
 		err = errors.New("xld login expects 3 arguments")
 	} else {
-		cred := args[1] + ":" + args[2]
+		cred := subs[1] + ":" + subs[2]
 		sEnc := b64.StdEncoding.EncodeToString([]byte(cred))
-		result, err = Login(&LoginObject{args[0], sEnc})
+		result, err = Login(&LoginObject{subs[0], sEnc})
 	}
 	return
 }

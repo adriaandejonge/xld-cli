@@ -1,5 +1,5 @@
 package login
-
+/*
 import (
 	_ "fmt"
 	"net/http"
@@ -48,3 +48,4 @@ func TestNumber(t *testing.T) {
 	}
 
 }
+*/
