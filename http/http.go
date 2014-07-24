@@ -2,11 +2,22 @@ package http
 
 import (
 	"github.com/adriaandejonge/xld/login"
+	"io"
 	"io/ioutil"
 	"net/http"
 )
 
 func Read(path string) (statusCode int, body []byte, err error) {
+
+	return doHttp(path, "GET", nil)
+}
+
+func Post(path string, reader io.Reader) (statusCode int, body []byte, err error) {
+
+	return doHttp(path, "POST", reader)
+}
+
+func doHttp(path string, method string, reader io.Reader) (statusCode int, body []byte, err error) {
 
 	client := &http.Client{}
 
@@ -17,7 +28,7 @@ func Read(path string) (statusCode int, body []byte, err error) {
 
 	url := "http://" + loginData.Url + "/deployit" + path
 
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest(method, url, reader)
 	if err != nil {
 		return
 	}
@@ -35,4 +46,5 @@ func Read(path string) (statusCode int, body []byte, err error) {
 	}
 
 	return resp.StatusCode, body, err
+
 }

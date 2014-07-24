@@ -16,6 +16,7 @@ type (
 		Type         string        `xml:"type,attr"`
 		Virtual      bool          `xml:"virtual,attr"`
 		Versioned    bool          `xml:"versioned,attr"`
+		Root	     string        `xml:"root,attr"`
 		Properties   []Property    `xml:"property-descriptors>property-descriptor"`
 		ControlTasks []ControlTask `xml:"control-tasks>control-task"`
 		Interfaces   []string      `xml:"interfaces>interface"`

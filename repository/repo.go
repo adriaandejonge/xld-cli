@@ -4,12 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"bytes"
 	"github.com/adriaandejonge/xld/http"
 	"github.com/adriaandejonge/xld/metadata"
-	"github.com/clbanning/mxj"
 	"github.com/clbanning/mxj/j2x"
 )
-
 
 
 func Do(args []string) (result string, err error) {
@@ -35,7 +34,7 @@ func Do(args []string) (result string, err error) {
 
 func create(args []string) (result string, err error) {
 	typeName := args[0]
-	//ciName := args[1]
+	ciName := args[1]
 
 	ciType, err := metadata.Type(typeName)
 	if err != nil {
@@ -61,20 +60,28 @@ func create(args []string) (result string, err error) {
 
 		kind := ciType.Prop(key).Kind
 
+		if kind == "" {
+			return "error", errors.New("Unknown property type " + ciType.Type + "->" + key)
+		}
+
 		switch kind {
 
 		case "BOOLEAN", "INTEGER", "STRING", "ENUM":
-			// TODO Check that this is correct
 			mapProps[key] = value
 		case "CI":
-			mapProps[key] = map[string]interface{}{"-ref": value}
+			mapProps[key] = mapRef(value)
+			
+			
 		case "MAP_STRING_STRING":
 			entry := make([]map[string]interface{}, 0)
 
 			kvPairs := strings.Split(value, " ")
+			fmt.Println("kvpairs entry = ", len(kvPairs))
 			for _, kvPair := range kvPairs {
 				k, v := keyValue(kvPair, ":")
+				fmt.Println("k,v",k,v)
 				entry = append(entry, map[string]interface{}{"-key": k, "#text": v})
+				fmt.Println("len entry = ", len(entry))
 			}
 			mapProps[key] = map[string]interface{}{"entry": entry}
 		case "SET_OF_STRING", "LIST_OF_STRING":
@@ -83,64 +90,58 @@ func create(args []string) (result string, err error) {
 			// $.map() like function??? (wbn)
 			mapProps[key] = map[string]interface{}{"value": values}
 		case "SET_OF_CI", "LIST_OF_CI":
-			cis := make([]map[string]interface{}, 0)
-
-			ciRefs := strings.Split(value, ",")
-			for _, ref := range ciRefs {
-				cis = append(cis, map[string]interface{}{"-ref": ref})
-			}
-			mapProps[key] = map[string]interface{}{"ci": cis}
+			mapProps[key] = mapSetOfCis(value)
 
 		default:
-			// Should not get here
-			//return "error", errors.New("Unknown property type " + kind)
-			return "error", errors.New("Unknown property type " + ciType.Type + "->" + key)
+			return "error", errors.New("Unknown property kind " + kind + " --> XLD server newer than client?")
 			
 		}
 	}
 
-	final := map[string]interface{}{"ciType.Type": mapProps}
+	id := ciName
+	if ciType.Root != "" {
+		id = ciType.Root + "/" + id
+	}
+	mapProps["-id"] = id
+
+	final := map[string]interface{}{ciType.Type: mapProps}
+
+
 
 
 	json, _ := j2x.MapToJson(final)
 	xml, _ := j2x.JsonToXml(json)
 
-	// TODO Clean Up:
-	fmt.Println("\n\n")
-	fmt.Println("XML = ", string(xml))
+
+	statusCode, body, err := http.Post("/repository/ci/" + id, bytes.NewBuffer(xml))
+
+	if statusCode != 200 {
+		err = errors.New(fmt.Sprintf("HTTP status code %d: %s", statusCode, body))
+		// TODO if message type is XML (validation-message), then read and display nicely
+	}
 
 	return
+}
+
+func mapSetOfCis(value string) interface{} {
+	cis := make([]map[string]interface{}, 0)
+
+	ciRefs := strings.Split(value, ",")
+	for _, ref := range ciRefs {
+		cis = append(cis, mapRef(ref))
+	}
+	return map[string]interface{}{"ci": cis}
+
+}
+func mapRef(value string) map[string]interface{} {
+	// TODO read @ROOT for type of ref
+	// TODO or provide default for virtual type
+
+	return map[string]interface{}{"-ref": value}
 }
 
 func keyValue(combined string, split string) (key string, value string) {
 	keyval := strings.SplitN(combined, split, 2)
 	return keyval[0], keyval[1]
-
-}
-
-// TODO Clean up if code is not needed as example anymore
-func repo() (result string, err error) {
-
-	_, body, err := http.Read("/repository/ci/Infrastructure/test")
-	if err != nil {
-		return
-	}
-
-	m, err := mxj.NewMapXml(body)
-	if err != nil {
-		return
-	}
-
-	return fmt.Sprint("Map = ", m), nil
-
-}
-
-// TODO Clean up if code is not needed as example anymore
-func DoSomething() {
-
-	myMap := map[string]interface{}{"test": map[string]interface{}{"key": "value", "keys": "values", "map": map[string]interface{}{"array": []string{"a", "b", "c"}}}}
-	json, _ := j2x.MapToJson(myMap)
-	xml, _ := j2x.JsonToXml(json)
-	fmt.Println(string(xml))
 
 }
