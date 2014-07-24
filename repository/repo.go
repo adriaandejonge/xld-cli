@@ -10,6 +10,13 @@ import (
 	"github.com/clbanning/mxj/j2x"
 )
 
+var shorthand = map[string]string{
+	"app": "Applications",
+	"env": "Environments",
+	"inf": "Infrastructure",
+	"conf": "Configuration",
+}
+
 
 func Do(args []string) (result string, err error) {
 
@@ -23,7 +30,10 @@ func Do(args []string) (result string, err error) {
 		switch args[0] {
 		case "create":
 			return create(args[1:])
-			//return repo()
+
+		case "remove":
+			return remove(args[1:])
+
 		default:
 			return "error", errors.New("Unknown command")
 		}
@@ -54,9 +64,6 @@ func create(args []string) (result string, err error) {
 	props := args[2:]
 	for _, prop := range props {
 		key, value := keyValue(prop, "=")
-		fmt.Println("key = ", key)
-		fmt.Println("value = ", value)
-		fmt.Println("prop = ", ciType.Prop(key))
 
 		kind := ciType.Prop(key).Kind
 
@@ -76,12 +83,9 @@ func create(args []string) (result string, err error) {
 			entry := make([]map[string]interface{}, 0)
 
 			kvPairs := strings.Split(value, " ")
-			fmt.Println("kvpairs entry = ", len(kvPairs))
 			for _, kvPair := range kvPairs {
 				k, v := keyValue(kvPair, ":")
-				fmt.Println("k,v",k,v)
 				entry = append(entry, map[string]interface{}{"-key": k, "#text": v})
-				fmt.Println("len entry = ", len(entry))
 			}
 			mapProps[key] = map[string]interface{}{"entry": entry}
 		case "SET_OF_STRING", "LIST_OF_STRING":
@@ -113,7 +117,7 @@ func create(args []string) (result string, err error) {
 	xml, _ := j2x.JsonToXml(json)
 
 
-	statusCode, body, err := http.Post("/repository/ci/" + id, bytes.NewBuffer(xml))
+	statusCode, body, err := http.Create("/repository/ci/" + id, bytes.NewBuffer(xml))
 
 	if statusCode != 200 {
 		err = errors.New(fmt.Sprintf("HTTP status code %d: %s", statusCode, body))
@@ -121,6 +125,31 @@ func create(args []string) (result string, err error) {
 	}
 
 	return
+}
+
+func remove(args []string) (result string, err error) {
+	ciName := antiAbbreviate(args[0])
+
+	statusCode, body, err := http.Delete("/repository/ci/" + ciName)
+
+	result = string(body)
+
+
+	if statusCode < 200 || statusCode >= 300 {
+		err = errors.New(fmt.Sprintf("HTTP status code %d: %s", statusCode, body))
+	}
+
+	return 
+}
+
+func antiAbbreviate(ciName string) string {
+	prefix := strings.SplitN(ciName, "/", 2)
+	longer := shorthand[prefix[0]]
+
+	if longer != "" {
+		ciName = longer + "/" + prefix[1]
+	}
+	return ciName
 }
 
 func mapSetOfCis(value string) interface{} {
