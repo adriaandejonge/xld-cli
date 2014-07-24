@@ -102,6 +102,7 @@ func create(args intf.Command) (result string, err error) {
 	if ciType.Root != "" {
 		id = ciType.Root + "/" + id
 	}
+	id = antiAbbreviate(id)
 	mapProps["-id"] = id
 
 	final := map[string]interface{}{ciType.Type: mapProps}
@@ -120,6 +121,7 @@ func create(args intf.Command) (result string, err error) {
 func remove(args intf.Command) (result string, err error) {
 	subs := args.Subs()
 	ciName := antiAbbreviate(subs[0])
+	// TODO validate input
 
 	body, err := http.Delete("/repository/ci/" + ciName)
 
@@ -166,7 +168,7 @@ func mapRef(value string) map[string]interface{} {
 	// TODO read @ROOT for type of ref
 	// TODO or provide default for virtual type
 
-	return map[string]interface{}{"-ref": value}
+	return map[string]interface{}{"-ref": antiAbbreviate(value)}
 }
 
 func keyValue(combined string, split string) (key string, value string) {
