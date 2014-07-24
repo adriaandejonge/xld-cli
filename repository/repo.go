@@ -157,7 +157,7 @@ func mapSetOfCis(value string) interface{} {
 
 	ciRefs := strings.Split(value, ",")
 	for _, ref := range ciRefs {
-		cis = append(cis, mapRef(ref))
+		cis = append(cis, mapRef(strings.TrimSpace(ref)))
 	}
 	return map[string]interface{}{"ci": cis}
 
