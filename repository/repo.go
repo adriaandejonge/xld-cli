@@ -2,7 +2,6 @@ package repository
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 	"bytes"
 	"github.com/adriaandejonge/xld/http"
@@ -75,24 +74,16 @@ func create(args []string) (result string, err error) {
 
 		case "BOOLEAN", "INTEGER", "STRING", "ENUM":
 			mapProps[key] = value
+
 		case "CI":
 			mapProps[key] = mapRef(value)
 			
-			
 		case "MAP_STRING_STRING":
-			entry := make([]map[string]interface{}, 0)
+			mapProps[key] = mapStringString(value)
 
-			kvPairs := strings.Split(value, " ")
-			for _, kvPair := range kvPairs {
-				k, v := keyValue(kvPair, ":")
-				entry = append(entry, map[string]interface{}{"-key": k, "#text": v})
-			}
-			mapProps[key] = map[string]interface{}{"entry": entry}
 		case "SET_OF_STRING", "LIST_OF_STRING":
-			values := strings.Split(value, ",")
-			// TODO filter spaces
-			// $.map() like function??? (wbn)
-			mapProps[key] = map[string]interface{}{"value": values}
+			mapProps[key] = mapSetOfStrings(value)
+
 		case "SET_OF_CI", "LIST_OF_CI":
 			mapProps[key] = mapSetOfCis(value)
 
@@ -110,35 +101,26 @@ func create(args []string) (result string, err error) {
 
 	final := map[string]interface{}{ciType.Type: mapProps}
 
-
-
-
 	json, _ := j2x.MapToJson(final)
 	xml, _ := j2x.JsonToXml(json)
 
 
-	statusCode, body, err := http.Create("/repository/ci/" + id, bytes.NewBuffer(xml))
+	body, err := http.Create("/repository/ci/" + id, bytes.NewBuffer(xml))
 
-	if statusCode != 200 {
-		err = errors.New(fmt.Sprintf("HTTP status code %d: %s", statusCode, body))
-		// TODO if message type is XML (validation-message), then read and display nicely
-	}
+	
 
-	return
+	return string(body), err
 }
 
 func remove(args []string) (result string, err error) {
 	ciName := antiAbbreviate(args[0])
 
-	statusCode, body, err := http.Delete("/repository/ci/" + ciName)
+	body, err := http.Delete("/repository/ci/" + ciName)
 
 	result = string(body)
 
 
-	if statusCode < 200 || statusCode >= 300 {
-		err = errors.New(fmt.Sprintf("HTTP status code %d: %s", statusCode, body))
-	}
-
+	
 	return 
 }
 
@@ -150,6 +132,23 @@ func antiAbbreviate(ciName string) string {
 		ciName = longer + "/" + prefix[1]
 	}
 	return ciName
+}
+
+func mapStringString(value string) interface{} {
+	entry := make([]map[string]interface{}, 0)
+
+	kvPairs := strings.Split(value, " ")
+	for _, kvPair := range kvPairs {
+		k, v := keyValue(kvPair, ":")
+		entry = append(entry, map[string]interface{}{"-key": k, "#text": v})
+	}
+	return map[string]interface{}{"entry": entry}
+}
+
+func mapSetOfStrings(value string) interface{} {
+	values := strings.Split(value, ",")
+	values = fnMap(&values, strings.TrimSpace)
+	return map[string]interface{}{"value": values}
 }
 
 func mapSetOfCis(value string) interface{} {
@@ -173,4 +172,14 @@ func keyValue(combined string, split string) (key string, value string) {
 	keyval := strings.SplitN(combined, split, 2)
 	return keyval[0], keyval[1]
 
+}
+
+type strFn func(input string) string
+
+func fnMap(input *[]string, mapFunc strFn) (output []string) {
+	output = make([]string, 0)
+	for _, el := range *input {
+		output = append(output, mapFunc(el))
+	}
+	return
 }

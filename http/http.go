@@ -5,6 +5,8 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"errors"
+	"fmt"
 )
 
 func Read(path string) (statusCode int, body []byte, err error) {
@@ -17,9 +19,11 @@ func Get(path string) (statusCode int, body []byte, err error) {
 	return doHttp(path, "GET", nil)
 }
 
-func Create(path string, reader io.Reader) (statusCode int, body []byte, err error) {
+func Create(path string, reader io.Reader) (body []byte, err error) {
 
-	return Post(path, reader)
+	statusCode, body, err := Post(path, reader)
+	err = checkStatusCode(statusCode, body, err)
+	return
 }
 
 func Post(path string, reader io.Reader) (statusCode int, body []byte, err error) {
@@ -37,9 +41,11 @@ func Put(path string, reader io.Reader) (statusCode int, body []byte, err error)
 	return doHttp(path, "PUT", reader)
 }
 
-func Delete(path string) (statusCode int, body []byte, err error) {
+func Delete(path string) (body []byte, err error) {
 
-	return doHttp(path, "DELETE", nil)
+	statusCode, body, err := doHttp(path, "DELETE", nil)
+	err = checkStatusCode(statusCode, body, err)
+	return 
 }
 
 
@@ -73,4 +79,15 @@ func doHttp(path string, method string, reader io.Reader) (statusCode int, body 
 
 	return resp.StatusCode, body, err
 
+}
+
+func checkStatusCode(statusCode int, body []byte, err error) error {
+	if  err != nil {
+		return err
+	} else if statusCode < 200 || statusCode >= 300 {
+		return errors.New(fmt.Sprintf("HTTP status code %d: %s", statusCode, body))
+		
+		// TODO if message type is XML (validation-message), then read and display nicely
+	} 
+	return nil
 }
