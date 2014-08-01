@@ -4,8 +4,8 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"github.com/adriaandejonge/xld/http"
-	"github.com/adriaandejonge/xld/intf"
+	"github.com/adriaandejonge/xld/util/http"
+	"github.com/adriaandejonge/xld/util/intf"
 )
 
 type (

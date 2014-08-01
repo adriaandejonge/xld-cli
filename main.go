@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/adriaandejonge/xld/login"
+	"os"
 	"github.com/adriaandejonge/xld/repo"
 	"github.com/adriaandejonge/xld/metadata"
 	"github.com/adriaandejonge/xld/deploy"
-	"os"
-
-	"github.com/adriaandejonge/xld/cmd"
+	
+	"github.com/adriaandejonge/xld/util/login"
+	"github.com/adriaandejonge/xld/util/cmd"
 )
 
 func main() {
@@ -26,9 +26,11 @@ func main() {
 		result, err = repo.Do(args)
 	case "types", "describe":
 		result, err = metadata.Do(args)
-	case "plan", "deploy":
+	case "plan", "deploy", "upgrade", "undeploy":
 		result, err = deploy.Do(args)
 	default:
+
+		// TODO check update vs upgrade = similar
 		
 		fmt.Println("XL Deploy Command Line Alternative - EXPERIMENTAL v0.1")
 		fmt.Println("Created by Adriaan de Jonge - July, 2014")
@@ -42,6 +44,8 @@ func main() {
 		fmt.Println("describe - Describe properties for configuration type")
 		fmt.Println("plan     - Display steps in a deployment")
 		fmt.Println("deploy   - Execute a deployment")
+		fmt.Println("upgrade  - Updates an application deployment")
+		fmt.Println("undeploy - Uninstalls an application")
 		fmt.Println("\nFor additional help on parameters, type: xld <command> help")
 
 

@@ -1,7 +1,7 @@
 package http
 
 import (
-	"github.com/adriaandejonge/xld/login"
+	"github.com/adriaandejonge/xld/util/login"
 	"io"
 	"io/ioutil"
 	"net/http"

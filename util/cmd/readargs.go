@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"strings"
-	"github.com/adriaandejonge/xld/intf"
+	"github.com/adriaandejonge/xld/util/intf"
 )
 
 

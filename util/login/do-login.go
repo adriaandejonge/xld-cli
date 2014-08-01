@@ -9,7 +9,7 @@ import (
 	"os"
 	"os/user"
 	"strconv"
-	"github.com/adriaandejonge/xld/intf"
+	"github.com/adriaandejonge/xld/util/intf"
 )
 
 func Do(args intf.Command) (result string, err error) {
