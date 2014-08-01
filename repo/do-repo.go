@@ -1,4 +1,4 @@
-package repository
+package repo
 
 import (
 	"errors"
@@ -24,9 +24,6 @@ func Do(args intf.Command) (result string, err error) {
 	if len(subs) < 1 {
 		return "error", errors.New("xld repo expects at least 1 argument")
 	} else {
-		if err != nil {
-			return "error", err
-		}
 
 		switch args.Main() {
 		case "create":
@@ -102,11 +99,12 @@ func create(args intf.Command) (result string, err error) {
 	if ciType.Root != "" {
 		id = ciType.Root + "/" + id
 	}
-	id = antiAbbreviate(id)
+	id = AntiAbbreviate(id)
 	mapProps["-id"] = id
 
 	final := map[string]interface{}{ciType.Type: mapProps}
 
+	// TODO Make this a util?
 	json, _ := j2x.MapToJson(final)
 	xml, _ := j2x.JsonToXml(json)
 
@@ -120,7 +118,7 @@ func create(args intf.Command) (result string, err error) {
 
 func remove(args intf.Command) (result string, err error) {
 	subs := args.Subs()
-	ciName := antiAbbreviate(subs[0])
+	ciName := AntiAbbreviate(subs[0])
 	// TODO validate input
 
 	body, err := http.Delete("/repository/ci/" + ciName)
@@ -132,7 +130,8 @@ func remove(args intf.Command) (result string, err error) {
 	return 
 }
 
-func antiAbbreviate(ciName string) string {
+// TODO Make this a util?
+func AntiAbbreviate(ciName string) string {
 	prefix := strings.SplitN(ciName, "/", 2)
 	longer := shorthand[prefix[0]]
 
@@ -168,7 +167,7 @@ func mapRef(value string) map[string]interface{} {
 	// TODO read @ROOT for type of ref
 	// TODO or provide default for virtual type
 
-	return map[string]interface{}{"-ref": antiAbbreviate(value)}
+	return map[string]interface{}{"-ref": AntiAbbreviate(value)}
 }
 
 func keyValue(combined string, split string) (key string, value string) {
