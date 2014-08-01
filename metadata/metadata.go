@@ -75,27 +75,30 @@ func (ciType *CIType) indexProps() {
 func Do(args intf.Command) (result string, err error) {
 
 	subs := args.Subs()
-	if len(subs) == 0 {
-		return "error", errors.New("xld metadata expects at least 1 argument")
-	} else {
-		if err != nil {
-			return "error", err
+	switch args.Main() {
+	case "types":
+		// TODO check nr of args again
+		return types()
+	case "describe":
+		if len(subs) == 0 {
+			return "error", errors.New("xld metadata expects at least 1 argument")
+		} 
+		
+		for _, sub := range subs {
+			_, err := describe(sub)
+			if err != nil {
+				return "error", err
+			}
 		}
+		return "", nil
+		 
 
-		switch args.Main() {
-		case "types":
-			// TODO check nr of args again
-			return types()
-		case "describe":
-			// TODO check nr of args again
-			return describe(subs[0])
-
-		// TODO orchestrators
-		// TODO permissions
-		default:
-			return "error", errors.New("Unknown command")
-		}
+	// TODO orchestrators
+	// TODO permissions
+	default:
+		return "error", errors.New("Unknown command")
 	}
+
 }
 func types() (result string, err error) {
 	_, body, err := http.Read("/metadata/type")
@@ -115,17 +118,18 @@ func types() (result string, err error) {
 		fmt.Println(ciType.Type)
 	}
 
-	return "Done listing types", nil
+	return "", nil
 
 }
 func describe(typeName string) (result string, err error) {
 	ciType, err := Type(typeName)
+	fmt.Println(ciType.Type + ":")
 
 	for _, prop := range ciType.Properties {
-		fmt.Println(prop.Name, prop.Kind, iif(prop.Required, "required", ""), iif(prop.Hidden, "hidden", ""))
+		fmt.Println("  -" + prop.Name, prop.Kind, iif(prop.Required, "required", ""), iif(prop.Hidden, "hidden", ""))
 	}
 
-	return "Done listing type", nil
+	return "", nil
 }
 
 func Type(typeName string) (retType *CIType, err error) {
@@ -133,7 +137,7 @@ func Type(typeName string) (retType *CIType, err error) {
 	if long != "" {
 		typeName = long
 	}
-	fmt.Println("Typename = ", typeName)
+	//fmt.Println("Typename = ", typeName)
 
 	_, body, err := http.Read("/metadata/type/" + typeName)
 	if err != nil {
