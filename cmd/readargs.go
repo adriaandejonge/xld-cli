@@ -14,11 +14,18 @@ func ReadArgs(args []string) intf.Command {
 		}
 	}
 
-	main := args[0]
+	var main string
+
+	if len(args) > 0 {
+		main = args[0]
+	} else {
+		main = ""
+	}
+
 	var subs []string
 	if len(indices) > 0 {
 		subs = args[1:indices[0]]	
-	} else {
+	} else if len(args) > 1 {
 		subs = args[1:]
 	}
 	
