@@ -5,6 +5,7 @@ import (
 	"strings"
 	"fmt"	
 	"bytes"
+	"time"
 	"encoding/xml"
 	"github.com/adriaandejonge/xld/repo"
 	"github.com/clbanning/mxj/j2x"		
@@ -98,7 +99,7 @@ func deploy(args intf.Command) (result string, err error) {
 
 	body, err := http.Create("/task/" + result+ "/start", nil)
 
-	// TODO Read status and print updates
+ 	displayStatus(result)
 
 	return string(body), err
 }
@@ -110,11 +111,57 @@ func undeploy(args intf.Command) (result string, err error) {
 
 	body, err = http.Create("/deployment", bytes.NewBuffer(body))
 
+	taskId := string(body)
+
 	body, err = http.Create("/task/" + string(body) + "/start", nil)
 
-	// TODO Read status and print updates
+	displayStatus(taskId)
 
 	return string(body), err
+}
+
+func displayStatus(taskId string) {
+ 	timer := time.Tick(100 * time.Millisecond)
+ 	
+ 	previousStep := -1
+
+    for _ = range timer {
+
+        _, body, err := http.Read("/task/" + taskId + "/step")
+
+		task := Task{}
+		err = xml.Unmarshal(body, &task)
+		if err != nil {
+			return //"error", err
+		}
+
+		currentStep := task.CurrentStep
+
+		for i, step := range task.Steps {
+
+			// Fix current step - sometimes it is one too high
+			if step.State == "EXECUTING" {
+				currentStep = i
+			}
+
+			if(i > previousStep && i <= currentStep) {
+				fmt.Printf("%d/%d - " + step.Description + "\n", i + 1, task.TotalSteps)
+			}
+		}
+
+		previousStep = currentStep
+
+		if task.State == "EXECUTED" {
+			break
+		} else if task.State == "FAILED" {
+			// TODO Throw error
+			// show logs
+			// can we simulate?
+			break
+		}
+
+
+    }
 }
 
 
