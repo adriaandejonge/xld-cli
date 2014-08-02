@@ -130,7 +130,7 @@ func displayStatus(taskId string) {
 		task := Task{}
 		err = xml.Unmarshal(body, &task)
 		if err != nil {
-			return //"error", err
+			return
 		}
 
 		currentStep := task.CurrentStep
