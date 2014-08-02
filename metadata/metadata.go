@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"io"
 	"github.com/adriaandejonge/xld/util/http"
 	"github.com/adriaandejonge/xld/util/intf"
 )
@@ -122,6 +123,10 @@ func types() (result string, err error) {
 }
 func describe(typeName string) (result string, err error) {
 	ciType, err := Type(typeName)
+	if err != nil {
+		return "error", err
+	}
+
 	fmt.Println(ciType.Type + ":")
 
 	for _, prop := range ciType.Properties {
@@ -146,9 +151,13 @@ func Type(typeName string) (retType *CIType, err error) {
 
 	ciType := CIType{}
 	err = xml.Unmarshal(body, &ciType)
-	if err != nil {
+
+	if err == io.EOF {
+		return nil, errors.New("Type " + typeName + " not found")
+	} else if err != nil {
 		return
 	}
+
 	return &ciType, nil
 }
 
