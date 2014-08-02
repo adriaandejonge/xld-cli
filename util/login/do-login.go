@@ -56,6 +56,7 @@ func Login(data *LoginObject) (result string, err error) {
 }
 
 func Check() (loginData *LoginObject, err error) {
+	// TODO Allow env var $XLD as alternative
 	fileData, err := ioutil.ReadFile(cacheFile())
 	if err != nil {
 		return nil, errors.New("User is not logged in")

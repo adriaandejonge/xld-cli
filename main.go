@@ -31,6 +31,7 @@ func main() {
 
 		// TODO check update vs upgrade = similar
 		// TODO Make list depend on permissions
+		// TODO if not logged in or env var; show how
 
 		fmt.Println("XL Deploy Command Line Alternative - EXPERIMENTAL v0.1")
 		fmt.Println("Created by Adriaan de Jonge - July, 2014")

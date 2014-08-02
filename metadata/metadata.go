@@ -110,7 +110,6 @@ func types() (result string, err error) {
 	list := List{}
 	err = xml.Unmarshal(body, &list)
 	if err != nil {
-		//fmt.Printf("error: %v", err)
 		return
 	}
 
@@ -141,7 +140,6 @@ func Type(typeName string) (retType *CIType, err error) {
 	if long != "" {
 		typeName = long
 	}
-	//fmt.Println("Typename = ", typeName)
 
 	_, body, err := http.Read("/metadata/type/" + typeName)
 	if err != nil {
