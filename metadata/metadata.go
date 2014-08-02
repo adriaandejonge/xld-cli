@@ -17,12 +17,12 @@ type (
 		Type         string        `xml:"type,attr"`
 		Virtual      bool          `xml:"virtual,attr"`
 		Versioned    bool          `xml:"versioned,attr"`
-		Root	     string        `xml:"root,attr"`
+		Root         string        `xml:"root,attr"`
 		Properties   []Property    `xml:"property-descriptors>property-descriptor"`
 		ControlTasks []ControlTask `xml:"control-tasks>control-task"`
 		Interfaces   []string      `xml:"interfaces>interface"`
 		SuperTypes   []string      `xml:"superTypes>superType"`
-		props map[string]Property
+		props        map[string]Property
 	}
 
 	Property struct {
@@ -54,8 +54,8 @@ type (
 
 var shorthand = map[string]string{
 	"dict": "udm.Dictionary",
-	"dir": "core.Directory",
-	"env": "udm.Environment",
+	"dir":  "core.Directory",
+	"env":  "udm.Environment",
 }
 
 func (ciType *CIType) Prop(name string) Property {
@@ -82,8 +82,8 @@ func Do(args intf.Command) (result string, err error) {
 	case "describe":
 		if len(subs) == 0 {
 			return "error", errors.New("xld metadata expects at least 1 argument")
-		} 
-		
+		}
+
 		for _, sub := range subs {
 			_, err := describe(sub)
 			if err != nil {
@@ -91,7 +91,6 @@ func Do(args intf.Command) (result string, err error) {
 			}
 		}
 		return "", nil
-		 
 
 	// TODO orchestrators
 	// TODO permissions
@@ -126,7 +125,7 @@ func describe(typeName string) (result string, err error) {
 	fmt.Println(ciType.Type + ":")
 
 	for _, prop := range ciType.Properties {
-		fmt.Println("  -" + prop.Name, prop.Kind, iif(prop.Required, "required", ""), iif(prop.Hidden, "hidden", ""))
+		fmt.Println("  -"+prop.Name, prop.Kind, iif(prop.Required, "required", ""), iif(prop.Hidden, "hidden", ""))
 	}
 
 	return "", nil

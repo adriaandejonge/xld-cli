@@ -1,17 +1,16 @@
 package deploy
 
 import (
-	"errors"
-	"strings"
-	"fmt"	
 	"bytes"
-	"time"
 	"encoding/xml"
+	"errors"
+	"fmt"
 	"github.com/adriaandejonge/xld/repo"
-	"github.com/clbanning/mxj/j2x"		
-	 "github.com/adriaandejonge/xld/util/intf"
 	"github.com/adriaandejonge/xld/util/http"
-
+	"github.com/adriaandejonge/xld/util/intf"
+	"github.com/clbanning/mxj/j2x"
+	"strings"
+	"time"
 )
 
 func Do(args intf.Command) (result string, err error) {
@@ -43,30 +42,30 @@ func Do(args intf.Command) (result string, err error) {
 
 type (
 	Task struct {
-		Id string `xml:"id,attr"`
-		CurrentStep int `xml:"currentStep,attr"`
-		TotalSteps int `xml:"totalSteps,attr"`
-		Failures int `xml:"failures,attr"`
-		State string `xml:"state,attr"`
-		State2 string `xml:"state2,attr"`
-		Owner string `xml:"owner,attr"`
-		Description string `xml:"description"`
-		Current int `xml:"currentSteps>current"`
-		Environment string `xml:"metadata>environment"`
-		TaskType string `xml:"metadata>taskType"`
+		Id            string `xml:"id,attr"`
+		CurrentStep   int    `xml:"currentStep,attr"`
+		TotalSteps    int    `xml:"totalSteps,attr"`
+		Failures      int    `xml:"failures,attr"`
+		State         string `xml:"state,attr"`
+		State2        string `xml:"state2,attr"`
+		Owner         string `xml:"owner,attr"`
+		Description   string `xml:"description"`
+		Current       int    `xml:"currentSteps>current"`
+		Environment   string `xml:"metadata>environment"`
+		TaskType      string `xml:"metadata>taskType"`
 		EnvironmentId string `xml:"metadata>environment_id"`
-		Application string `xml:"metadata>application"`
-		Version string `xml:"metadata>version"`
-		Steps []Step `xml:"steps>step"`
+		Application   string `xml:"metadata>application"`
+		Version       string `xml:"metadata>version"`
+		Steps         []Step `xml:"steps>step"`
 	}
 
 	Step struct {
-		Failures int `xml:"failures,attr"`
-		State string `xml:"state,attr"`
-		Description string `xml:"description"`
-		Log string `xml:"log"`
+		Failures         int    `xml:"failures,attr"`
+		State            string `xml:"state,attr"`
+		Description      string `xml:"description"`
+		Log              string `xml:"log"`
 		PreviewAvailable string `xml:"metadata>previewAvailable"`
-		Order int `xml:"metadata>order"`
+		Order            int    `xml:"metadata>order"`
 	}
 )
 
@@ -75,7 +74,7 @@ func plan(args intf.Command) (result string, err error) {
 
 	// TODO Read err
 
-	_, body, err := http.Read("/task/" + result+ "/step")
+	_, body, err := http.Read("/task/" + result + "/step")
 
 	task := Task{}
 	err = xml.Unmarshal(body, &task)
@@ -86,10 +85,8 @@ func plan(args intf.Command) (result string, err error) {
 	fmt.Println("Plan", task.Description)
 
 	for i, step := range task.Steps {
-		fmt.Printf("%d/%d - " + step.Description + "\n", i + 1, task.TotalSteps)
+		fmt.Printf("%d/%d - "+step.Description+"\n", i+1, task.TotalSteps)
 	}
-
-
 
 	return "", err
 }
@@ -97,9 +94,9 @@ func plan(args intf.Command) (result string, err error) {
 func deploy(args intf.Command) (result string, err error) {
 	result, err = prepare(args)
 
-	body, err := http.Create("/task/" + result+ "/start", nil)
+	body, err := http.Create("/task/"+result+"/start", nil)
 
- 	displayStatus(result)
+	displayStatus(result)
 
 	return string(body), err
 }
@@ -113,7 +110,7 @@ func undeploy(args intf.Command) (result string, err error) {
 
 	taskId := string(body)
 
-	body, err = http.Create("/task/" + string(body) + "/start", nil)
+	body, err = http.Create("/task/"+string(body)+"/start", nil)
 
 	displayStatus(taskId)
 
@@ -121,13 +118,14 @@ func undeploy(args intf.Command) (result string, err error) {
 }
 
 func displayStatus(taskId string) {
- 	timer := time.Tick(100 * time.Millisecond)
- 	
- 	previousStep := -1
+	timer := time.Tick(100 * time.Millisecond)
 
-    for _ = range timer {
+	previousStep := -1
 
-        _, body, err := http.Read("/task/" + taskId + "/step")
+	for _ = range timer {
+
+		// TODO support parallel deployments
+		_, body, err := http.Read("/task/" + taskId + "/step")
 
 		task := Task{}
 		err = xml.Unmarshal(body, &task)
@@ -144,8 +142,8 @@ func displayStatus(taskId string) {
 				currentStep = i
 			}
 
-			if(i > previousStep && i <= currentStep) {
-				fmt.Printf("%d/%d - " + step.Description + "\n", i + 1, task.TotalSteps)
+			if i > previousStep && i <= currentStep {
+				fmt.Printf("%d/%d - "+step.Description+"\n", i+1, task.TotalSteps)
 			}
 		}
 
@@ -154,16 +152,14 @@ func displayStatus(taskId string) {
 		if task.State == "EXECUTED" {
 			break
 		} else if task.State == "FAILED" {
-			// TODO Throw error
-			// show logs
-			// can we simulate?
+			// TODO throw error on deployment FAILED
+			// TODO show logs on deployment error
+			// can we simulate an error?
 			break
 		}
 
-
-    }
+	}
 }
-
 
 func prepare(args intf.Command) (result string, err error) {
 	subs := args.Subs()
@@ -172,19 +168,19 @@ func prepare(args intf.Command) (result string, err error) {
 
 	parts := strings.Split(appVersion, "/")
 
-	app := parts[len(parts) - 2]
+	app := parts[len(parts)-2]
 	//version := parts[len(parts) - 1]
 
-	deployment := map[string]interface{} {
-		"deployment": map[string]interface{} {
+	deployment := map[string]interface{}{
+		"deployment": map[string]interface{}{
 			"-type": "INITIAL",
-			"application": map[string]interface{} {
-				"udm.DeployedApplication": map[string]interface{} {
+			"application": map[string]interface{}{
+				"udm.DeployedApplication": map[string]interface{}{
 					"-id": targetEnv + "/" + app,
-					"version": map[string]interface{} {
+					"version": map[string]interface{}{
 						"-ref": appVersion,
 					},
-					"environment": map[string]interface{} {
+					"environment": map[string]interface{}{
 						"-ref": targetEnv,
 					},
 					"optimizePlan": "true",
@@ -193,13 +189,11 @@ func prepare(args intf.Command) (result string, err error) {
 		},
 	}
 
-
 	// TODO Make this a util?
 	json, _ := j2x.MapToJson(deployment)
 	xml, _ := j2x.JsonToXml(json)
 
-
-	body, err := http.Create("/deployment/prepare/deployeds", bytes.NewBuffer(xml))	
+	body, err := http.Create("/deployment/prepare/deployeds", bytes.NewBuffer(xml))
 	if err != nil {
 		return "error", err
 	}
@@ -208,5 +202,3 @@ func prepare(args intf.Command) (result string, err error) {
 
 	return string(body), err
 }
-
-

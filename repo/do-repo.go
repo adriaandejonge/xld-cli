@@ -1,23 +1,21 @@
 package repo
 
 import (
-	"errors"
-	"strings"
 	"bytes"
+	"errors"
 	"github.com/adriaandejonge/xld/metadata"
 	"github.com/adriaandejonge/xld/util/http"
 	"github.com/adriaandejonge/xld/util/intf"
 	"github.com/clbanning/mxj/j2x"
-
+	"strings"
 )
 
 var shorthand = map[string]string{
-	"app": "Applications",
-	"env": "Environments",
-	"inf": "Infrastructure",
+	"app":  "Applications",
+	"env":  "Environments",
+	"inf":  "Infrastructure",
 	"conf": "Configuration",
 }
-
 
 func Do(args intf.Command) (result string, err error) {
 	subs := args.Subs()
@@ -49,9 +47,6 @@ func create(args intf.Command) (result string, err error) {
 	if err != nil {
 		return
 	}
-	
-
-
 
 	// put this as the root in a map containing a map
 	// do this AFTER the for loop
@@ -79,7 +74,7 @@ func create(args intf.Command) (result string, err error) {
 
 		case "CI":
 			mapProps[key] = mapRef(prop.Value())
-			
+
 		case "MAP_STRING_STRING":
 			mapProps[key] = mapStringString(prop.Map())
 
@@ -91,7 +86,7 @@ func create(args intf.Command) (result string, err error) {
 
 		default:
 			return "error", errors.New("Unknown property kind " + kind + " --> XLD server newer than client?")
-			
+
 		}
 	}
 
@@ -108,10 +103,7 @@ func create(args intf.Command) (result string, err error) {
 	json, _ := j2x.MapToJson(final)
 	xml, _ := j2x.JsonToXml(json)
 
-
-	body, err := http.Create("/repository/ci/" + id, bytes.NewBuffer(xml))
-
-	
+	body, err := http.Create("/repository/ci/"+id, bytes.NewBuffer(xml))
 
 	return string(body), err
 }
@@ -125,9 +117,7 @@ func remove(args intf.Command) (result string, err error) {
 
 	result = string(body)
 
-
-	
-	return 
+	return
 }
 
 // TODO Make this a util?
@@ -175,5 +165,3 @@ func keyValue(combined string, split string) (key string, value string) {
 	return keyval[0], keyval[1]
 
 }
-
-

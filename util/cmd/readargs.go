@@ -1,10 +1,9 @@
 package cmd
 
 import (
-	"strings"
 	"github.com/adriaandejonge/xld/util/intf"
+	"strings"
 )
-
 
 func ReadArgs(args []string) intf.Command {
 	indices := make([]int, 0)
@@ -24,20 +23,19 @@ func ReadArgs(args []string) intf.Command {
 
 	var subs []string
 	if len(indices) > 0 {
-		subs = args[1:indices[0]]	
+		subs = args[1:indices[0]]
 	} else if len(args) > 1 {
 		subs = args[1:]
 	}
-	
 
 	arguments := make([]intf.Argument, len(indices))
 
 	for i, index := range indices {
-		
-		if i == len(indices) - 1 {
+
+		if i == len(indices)-1 {
 			arguments[i] = &Argument{args[index][1:], args[index+1:]}
 		} else {
-			arguments[i] = &Argument{args[index][1:], args[index+1:indices[i+1]]}
+			arguments[i] = &Argument{args[index][1:], args[index+1 : indices[i+1]]}
 		}
 
 	}
@@ -45,16 +43,15 @@ func ReadArgs(args []string) intf.Command {
 	return &MainCmd{main, subs, arguments}
 }
 
-type(
-
+type (
 	MainCmd struct {
-		main string
-		subs []string
+		main      string
+		subs      []string
 		arguments []intf.Argument
 	}
 
 	Argument struct {
-		name string
+		name   string
 		values []string
 	}
 )
@@ -95,5 +92,3 @@ func (a *Argument) Map() map[string]string {
 	}
 	return argMap
 }
-
-		

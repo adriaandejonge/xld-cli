@@ -4,12 +4,12 @@ import (
 	b64 "encoding/base64"
 	"encoding/json"
 	"errors"
+	"github.com/adriaandejonge/xld/util/intf"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"os/user"
 	"strconv"
-	"github.com/adriaandejonge/xld/util/intf"
 )
 
 func Do(args intf.Command) (result string, err error) {

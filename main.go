@@ -2,19 +2,18 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"github.com/adriaandejonge/xld/repo"
-	"github.com/adriaandejonge/xld/metadata"
 	"github.com/adriaandejonge/xld/deploy"
-	
-	"github.com/adriaandejonge/xld/util/login"
+	"github.com/adriaandejonge/xld/metadata"
+	"github.com/adriaandejonge/xld/repo"
+	"os"
+
 	"github.com/adriaandejonge/xld/util/cmd"
+	"github.com/adriaandejonge/xld/util/login"
 )
 
 func main() {
 
 	args := cmd.ReadArgs(os.Args[1:])
-
 
 	var err error
 	var result string
@@ -31,7 +30,8 @@ func main() {
 	default:
 
 		// TODO check update vs upgrade = similar
-		
+		// TODO Make list depend on permissions
+
 		fmt.Println("XL Deploy Command Line Alternative - EXPERIMENTAL v0.1")
 		fmt.Println("Created by Adriaan de Jonge - July, 2014")
 		fmt.Println("\nUsage: xld <command> <params...>\n\nCommands\n")
@@ -48,10 +48,9 @@ func main() {
 		fmt.Println("undeploy - Uninstalls an application")
 		fmt.Println("\nFor additional help on parameters, type: xld <command> help")
 
-
 	}
 	if err != nil {
-		fmt.Println("ERROR", err)	
+		fmt.Println("ERROR", err)
 	} else if result != "" {
 		fmt.Println(result)
 	}
