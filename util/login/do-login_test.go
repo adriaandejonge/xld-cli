@@ -1,15 +1,15 @@
 package login
 
-/*
 import (
 	_ "fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"github.com/adriaandejonge/xld/util/cmd"
 )
 
 func expectError(t *testing.T, URL string) {
-	_, err := Do([]string{URL, "admin", "addmin"})
+	_, err := Do(cmd.ReadArgs([]string{URL, "admin", "addmin"}))
 	if err == nil {
 		t.Fail()
 	}
@@ -37,16 +37,15 @@ func TestUnauthorized(t *testing.T) {
 }
 
 func TestNumber(t *testing.T) {
-	_, err := Do([]string{"someurl.com:1234", "username", "password", "toomany"})
+	_, err := Do(cmd.ReadArgs([]string{"someurl.com:1234", "username", "password", "toomany"}))
 	if err == nil {
 		// Expected error
 		t.Fail()
 	}
-	_, err = Do([]string{"someurl.com:1234", "toofew"})
+	_, err = Do(cmd.ReadArgs([]string{"someurl.com:1234", "toofew"}))
 	if err == nil {
 		// Expected error
 		t.Fail()
 	}
 
 }
-*/
