@@ -18,11 +18,7 @@ var shorthand = map[string]string{
 }
 
 func Do(args intf.Command) (result string, err error) {
-	subs := args.Subs()
-	if len(subs) < 1 {
-		return "error", errors.New("xld repo expects at least 1 argument")
-	} else {
-
+	
 		switch args.Main() {
 		case "create":
 			return create(args)
@@ -42,7 +38,7 @@ func Do(args intf.Command) (result string, err error) {
 			return "error", errors.New("Unknown command")
 		}
 
-	}
+	
 
 }
 
@@ -119,7 +115,45 @@ func create(args intf.Command) (result string, err error) {
 func list(args intf.Command) (result string, err error) {
 	//http://localhost:4516/deployit/repository/query?ancestor=Environments
 
-	return "error", errors.New("xld list not yet implemented")
+	subs := args.Subs()
+
+	arguments := make([]string, 0)
+
+	if len(subs) > 0 {
+		if strings.HasSuffix(subs[0], "*") {
+			arguments = append(arguments, "ancestor=" + AntiAbbreviate(strings.Replace(subs[0], "*", "", -1)))
+		} else {
+			arguments = append(arguments, "parent=" + AntiAbbreviate(subs[0]))
+		}
+	}
+
+	extra := args.Arguments()
+	for _, el := range extra {
+		name := el.Name()
+
+		switch name {
+		case "type":
+			arguments = append(arguments, "type=" + el.Value())
+		case "like":
+			arguments = append(arguments, "namePattern=" + el.Value())
+		case "before":
+			//TODO lastModifiedBefore	
+		case "after":
+			//TODO lastModifiedAfter
+		case "page":
+			arguments = append(arguments, "page=" + el.Value())
+		case "pagesize":
+			arguments = append(arguments, "resultsPerPage=" + el.Value())
+		}
+	}
+
+
+	body, err := http.Read("/repository/query?" + strings.Join(arguments, "&"))
+	// READ body
+	return string(body), err
+	
+
+	//return "error", errors.New("xld list not yet implemented")
 }
 
 func update(args intf.Command) (result string, err error) {
@@ -143,8 +177,15 @@ func AntiAbbreviate(ciName string) string {
 	prefix := strings.SplitN(ciName, "/", 2)
 	longer := shorthand[prefix[0]]
 
-	if longer != "" {
-		ciName = longer + "/" + prefix[1]
+	remainder := ""
+
+	if len(prefix) > 1 {
+		remainder = prefix[1]
+
+	}
+
+	if longer != "" {		
+		ciName = longer + "/" + remainder
 	}
 	return ciName
 }
