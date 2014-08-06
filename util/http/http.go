@@ -9,45 +9,48 @@ import (
 	"fmt"
 )
 
-func Read(path string) (statusCode int, body []byte, err error) {
-
-	return Get(path)
-}
-
-func Get(path string) (statusCode int, body []byte, err error) {
-
-	return doHttp(path, "GET", nil)
+func Read(path string) (body []byte, err error) {
+	statusCode, body, err := Get(path)
+	err = checkStatusCode(statusCode, body, err)
+	return 
 }
 
 func Create(path string, reader io.Reader) (body []byte, err error) {
-
 	statusCode, body, err := Post(path, reader)
 	err = checkStatusCode(statusCode, body, err)
 	return
 }
 
-func Post(path string, reader io.Reader) (statusCode int, body []byte, err error) {
-
-	return doHttp(path, "POST", reader)
-}
-
-func Update(path string, reader io.Reader) (statusCode int, body []byte, err error) {
-
-	return Put(path, reader)
-}
-
-func Put(path string, reader io.Reader) (statusCode int, body []byte, err error) {
-
-	return doHttp(path, "PUT", reader)
-}
-
-func Delete(path string) (body []byte, err error) {
-
-	statusCode, body, err := doHttp(path, "DELETE", nil)
+func Update(path string, reader io.Reader) (body []byte, err error) {
+	statusCode, body, err := Put(path, reader)
 	err = checkStatusCode(statusCode, body, err)
 	return 
 }
 
+func Remove(path string) (body []byte, err error) {
+
+	// TODO Check for existance first
+	
+	statusCode, body, err := Delete(path)
+	err = checkStatusCode(statusCode, body, err)
+	return 
+}
+
+func Get(path string) (statusCode int, body []byte, err error) {
+	return doHttp(path, "GET", nil)
+}
+
+func Post(path string, reader io.Reader) (statusCode int, body []byte, err error) {
+	return doHttp(path, "POST", reader)
+}
+
+func Put(path string, reader io.Reader) (statusCode int, body []byte, err error) {
+	return doHttp(path, "PUT", reader)
+}
+
+func Delete(path string) (statusCode int, body []byte, err error) {
+	return doHttp(path, "DELETE", nil)
+}
 
 func doHttp(path string, method string, reader io.Reader) (statusCode int, body []byte, err error) {
 

@@ -101,7 +101,7 @@ func Do(args intf.Command) (result string, err error) {
 
 }
 func types() (result string, err error) {
-	_, body, err := http.Read("/metadata/type")
+	body, err := http.Read("/metadata/type")
 	if err != nil {
 		return
 	}
@@ -141,7 +141,7 @@ func Type(typeName string) (retType *CIType, err error) {
 		typeName = long
 	}
 
-	_, body, err := http.Read("/metadata/type/" + typeName)
+	body, err := http.Read("/metadata/type/" + typeName)
 	if err != nil {
 		return
 	}

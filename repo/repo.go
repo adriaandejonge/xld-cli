@@ -27,6 +27,14 @@ func Do(args intf.Command) (result string, err error) {
 		case "create":
 			return create(args)
 
+		case "update":
+			return update(args)
+
+		case "list":
+			return list(args)
+
+			// TODO keyword "read"?
+
 		case "remove":
 			return remove(args)
 
@@ -108,12 +116,22 @@ func create(args intf.Command) (result string, err error) {
 	return string(body), err
 }
 
+func list(args intf.Command) (result string, err error) {
+	//http://localhost:4516/deployit/repository/query?ancestor=Environments
+
+	return "error", errors.New("xld list not yet implemented")
+}
+
+func update(args intf.Command) (result string, err error) {
+	return "error", errors.New("xld update not yet implemented")
+}
+
 func remove(args intf.Command) (result string, err error) {
 	subs := args.Subs()
 	ciName := AntiAbbreviate(subs[0])
 	// TODO validate input
 
-	body, err := http.Delete("/repository/ci/" + ciName)
+	body, err := http.Remove("/repository/ci/" + ciName)
 
 	result = string(body)
 

@@ -72,9 +72,8 @@ type (
 func plan(args intf.Command) (result string, err error) {
 	result, err = prepare(args)
 
+	body, err := http.Read("/task/" + result + "/step")
 	// TODO Read err
-
-	_, body, err := http.Read("/task/" + result + "/step")
 
 	task := Task{}
 	err = xml.Unmarshal(body, &task)
@@ -104,13 +103,16 @@ func deploy(args intf.Command) (result string, err error) {
 func undeploy(args intf.Command) (result string, err error) {
 	subs := args.Subs()
 	appToUndeploy := repo.AntiAbbreviate(subs[0])
-	_, body, err := http.Read("/deployment/prepare/undeploy?deployedApplication=" + appToUndeploy)
+	body, err := http.Read("/deployment/prepare/undeploy?deployedApplication=" + appToUndeploy)
+	// TODO Read error
 
 	body, err = http.Create("/deployment", bytes.NewBuffer(body))
+	// TODO Read error
 
 	taskId := string(body)
 
 	body, err = http.Create("/task/"+string(body)+"/start", nil)
+	// TODO Read error
 
 	displayStatus(taskId)
 
@@ -125,7 +127,8 @@ func displayStatus(taskId string) {
 	for _ = range timer {
 
 		// TODO support parallel deployments
-		_, body, err := http.Read("/task/" + taskId + "/step")
+		body, err := http.Read("/task/" + taskId + "/step")
+		// TODO Read error
 
 		task := Task{}
 		err = xml.Unmarshal(body, &task)
