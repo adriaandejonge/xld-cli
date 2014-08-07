@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/adriaandejonge/xld/deploy"
 	"github.com/adriaandejonge/xld/metadata"
@@ -11,6 +12,22 @@ import (
 	"github.com/adriaandejonge/xld/util/login"
 )
 
+var commands cmd.OptionList = cmd.OptionList{
+	login.LoginCmd,
+	//login.LoutoutCmd
+	deploy.PlanCmd,
+	deploy.DeployCmd,
+	deploy.UpgradeCmd,
+	deploy.UndeployCmd,
+	repo.CreateCmd,
+	repo.UpdateCmd,
+	repo.RemoveCmd,
+	repo.ListCmd,
+	//repo.ReadCmd,
+	metadata.DescribeCmd,
+	metadata.TypesCmd,
+}
+
 func main() {
 
 	args := cmd.ReadArgs(os.Args[1:])
@@ -18,16 +35,20 @@ func main() {
 	var err error
 	var result string
 
-	switch args.Main() {
-	case "login", "connect":
-		result, err = login.Do(args)
-	case "create", "update", "remove", "list":
-		result, err = repo.Do(args)
-	case "types", "describe":
-		result, err = metadata.Do(args)
-	case "plan", "deploy", "upgrade", "undeploy":
-		result, err = deploy.Do(args)
-	default:
+	finder := commands.Finder()
+	command, ok := finder(args.Main())
+
+	if ok {
+
+		if len(args.Subs()) >= command.MinArgs {
+			result, err = command.Do(args)
+		} else {
+			errorText := fmt.Sprintf(
+				"Command %s expects at least %d arguments",
+				command.Name, command.MinArgs)
+			err = errors.New(errorText)
+		}
+	} else {
 
 		// TODO check update vs upgrade = similar
 		// TODO Make list depend on permissions
@@ -35,18 +56,17 @@ func main() {
 
 		fmt.Println("XL Deploy Command Line Alternative - EXPERIMENTAL v0.1")
 		fmt.Println("Created by Adriaan de Jonge - July, 2014")
+
 		fmt.Println("\nUsage: xld <command> <params...>\n\nCommands\n")
-		fmt.Println("login    - Provide URL, username and password")
-		fmt.Println("create   - Create new configuration item")
-		fmt.Println("update   - Change existing configuration item")
-		fmt.Println("remove   - Remove existing configuration item")
-		fmt.Println("list     - List configuration items")
-		fmt.Println("types    - List configuration types")
-		fmt.Println("describe - Describe properties for configuration type")
-		fmt.Println("plan     - Display steps in a deployment")
-		fmt.Println("deploy   - Execute a deployment")
-		fmt.Println("upgrade  - Updates an application deployment")
-		fmt.Println("undeploy - Uninstalls an application")
+
+		for _, el := range commands.List() {
+
+			name := el.Name + "            "
+			name = name[:10]
+
+			fmt.Println(name, "-", el.Description)
+		}
+
 		fmt.Println("\nFor additional help on parameters, type: xld <command> help")
 
 	}

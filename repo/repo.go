@@ -18,31 +18,6 @@ var shorthand = map[string]string{
 	"conf": "Configuration",
 }
 
-func Do(args intf.Command) (result string, err error) {
-	
-		switch args.Main() {
-		case "create":
-			return create(args)
-
-		case "update":
-			return update(args)
-
-		case "list":
-			return list(args)
-
-			// TODO keyword "read"?
-
-		case "remove":
-			return remove(args)
-
-		default:
-			return "error", errors.New("Unknown command")
-		}
-
-	
-
-}
-
 func create(args intf.Command) (result string, err error) {
 	subs := args.Subs()
 	typeName := subs[0]

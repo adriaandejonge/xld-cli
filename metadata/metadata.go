@@ -73,34 +73,7 @@ func (ciType *CIType) indexProps() {
 	}
 }
 
-func Do(args intf.Command) (result string, err error) {
-
-	subs := args.Subs()
-	switch args.Main() {
-	case "types":
-		// TODO check nr of args again
-		return types()
-	case "describe":
-		if len(subs) == 0 {
-			return "error", errors.New("xld metadata expects at least 1 argument")
-		}
-
-		for _, sub := range subs {
-			_, err := describe(sub)
-			if err != nil {
-				return "error", err
-			}
-		}
-		return "", nil
-
-	// TODO orchestrators
-	// TODO permissions
-	default:
-		return "error", errors.New("Unknown command")
-	}
-
-}
-func types() (result string, err error) {
+func types(args intf.Command) (result string, err error) {
 	body, err := http.Read("/metadata/type")
 	if err != nil {
 		return
@@ -120,7 +93,21 @@ func types() (result string, err error) {
 	return "", nil
 
 }
-func describe(typeName string) (result string, err error) {
+
+func describe(args intf.Command) (result string, err error) {
+	subs := args.Subs()
+
+
+		for _, sub := range subs {
+			_, err := describeOne(sub)
+			if err != nil {
+				return "error", err
+			}
+		}
+		return "", nil
+
+}
+func describeOne(typeName string) (result string, err error) {
 	ciType, err := Type(typeName)
 	if err != nil {
 		return "error", err

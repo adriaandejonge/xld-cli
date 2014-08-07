@@ -15,13 +15,11 @@ import (
 func Do(args intf.Command) (result string, err error) {
 
 	subs := args.Subs()
-	if len(subs) != 3 {
-		err = errors.New("xld login expects 3 arguments")
-	} else {
-		cred := subs[1] + ":" + subs[2]
-		sEnc := b64.StdEncoding.EncodeToString([]byte(cred))
-		result, err = Login(&LoginObject{subs[0], sEnc})
-	}
+	
+	cred := subs[1] + ":" + subs[2]
+	sEnc := b64.StdEncoding.EncodeToString([]byte(cred))
+	result, err = Login(&LoginObject{subs[0], sEnc})
+
 	return
 }
 

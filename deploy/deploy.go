@@ -13,33 +13,6 @@ import (
 	"time"
 )
 
-func Do(args intf.Command) (result string, err error) {
-	subs := args.Subs()
-	if len(subs) < 0 {
-		// TODO meaningful
-		return "error", errors.New("xld deploy expects at least 0 arguments")
-	} else {
-
-		switch args.Main() {
-
-		case "plan":
-			return plan(args)
-
-		case "deploy":
-			return deploy(args)
-
-		case "upgrade":
-			return "error", errors.New("Update is not yet implemented")
-
-		case "undeploy":
-			return undeploy(args)
-
-		default:
-			return "error", errors.New("Unknown command")
-		}
-	}
-}
-
 type (
 	Task struct {
 		Id            string `xml:"id,attr"`
@@ -98,6 +71,10 @@ func deploy(args intf.Command) (result string, err error) {
 	displayStatus(result)
 
 	return string(body), err
+}
+
+func upgrade(args intf.Command) (result string, err error) {
+	return "error", errors.New("Update is not yet implemented")
 }
 
 func undeploy(args intf.Command) (result string, err error) {

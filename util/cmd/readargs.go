@@ -1,12 +1,12 @@
 package cmd
 
 import (
-	"os"
-	"fmt"
-	"strings"
-	"io/ioutil"
 	"encoding/json"
+	"fmt"
 	"github.com/adriaandejonge/xld/util/intf"
+	"io/ioutil"
+	"os"
+	"strings"
 )
 
 func ReadArgs(args []string) intf.Command {
@@ -32,11 +32,10 @@ func ReadArgs(args []string) intf.Command {
 			// TODO THROW ERROR
 		}
 
-		for k,v := range input {
+		for k, v := range input {
 			arguments = append(arguments, &JsonArg{k, v})
 		}
 
-		
 	} else {
 		arguments = cmdArguments(args, indices)
 	}
@@ -98,9 +97,8 @@ func cmdArguments(args []string, indices []int) (arguments []intf.Argument) {
 					if err != nil {
 						// TODO THROW ERROR
 					}
-					
-					arguments[i] = &JsonArg{cmdArg.name, input}
 
+					arguments[i] = &JsonArg{cmdArg.name, input}
 
 				case "csv":
 					fmt.Println("csv not yet implemented")
@@ -109,9 +107,7 @@ func cmdArguments(args []string, indices []int) (arguments []intf.Argument) {
 
 			}
 
-
 		}
-
 
 	}
 	return
@@ -125,7 +121,3 @@ func subs(args []string, indices []int) (subs []string) {
 	}
 	return
 }
-
-
-
-
