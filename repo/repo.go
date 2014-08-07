@@ -8,6 +8,7 @@ import (
 	"github.com/adriaandejonge/xld/util/intf"
 	"github.com/clbanning/mxj/j2x"
 	"strings"
+	"net/url"
 )
 
 var shorthand = map[string]string{
@@ -121,9 +122,9 @@ func list(args intf.Command) (result string, err error) {
 
 	if len(subs) > 0 {
 		if strings.HasSuffix(subs[0], "*") {
-			arguments = append(arguments, "ancestor=" + AntiAbbreviate(strings.Replace(subs[0], "*", "", -1)))
+			arguments = append(arguments, "ancestor=" + url.QueryEscape(AntiAbbreviate(strings.Replace(subs[0], "*", "", -1))))
 		} else {
-			arguments = append(arguments, "parent=" + AntiAbbreviate(subs[0]))
+			arguments = append(arguments, "parent=" + url.QueryEscape(AntiAbbreviate(subs[0])))
 		}
 	}
 
@@ -133,17 +134,17 @@ func list(args intf.Command) (result string, err error) {
 
 		switch name {
 		case "type":
-			arguments = append(arguments, "type=" + el.Value())
+			arguments = append(arguments, "type=" + url.QueryEscape(el.Value()))
 		case "like":
-			arguments = append(arguments, "namePattern=" + el.Value())
+			arguments = append(arguments, "namePattern=" + url.QueryEscape(el.Value()))
 		case "before":
 			//TODO lastModifiedBefore	
 		case "after":
 			//TODO lastModifiedAfter
 		case "page":
-			arguments = append(arguments, "page=" + el.Value())
+			arguments = append(arguments, "page=" + url.QueryEscape(el.Value()))
 		case "pagesize":
-			arguments = append(arguments, "resultsPerPage=" + el.Value())
+			arguments = append(arguments, "resultsPerPage=" + url.QueryEscape(el.Value()))
 		}
 	}
 
@@ -151,9 +152,6 @@ func list(args intf.Command) (result string, err error) {
 	body, err := http.Read("/repository/query?" + strings.Join(arguments, "&"))
 	// READ body
 	return string(body), err
-	
-
-	//return "error", errors.New("xld list not yet implemented")
 }
 
 func update(args intf.Command) (result string, err error) {
