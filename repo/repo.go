@@ -2,7 +2,11 @@ package repo
 
 import (
 	"bytes"
+	"encoding/xml"
 	"errors"
+	"fmt"
+	"regexp"
+	"sort"
 	"github.com/adriaandejonge/xld/metadata"
 	"github.com/adriaandejonge/xld/util/http"
 	"github.com/adriaandejonge/xld/util/intf"
@@ -125,8 +129,85 @@ func list(args intf.Command) (result string, err error) {
 
 
 	body, err := http.Read("/repository/query?" + strings.Join(arguments, "&"))
-	// READ body
-	return string(body), err
+	list, err := readCiList(body)
+	if err != nil {
+		return "error", err
+	}
+	for _, el := range list.CIs {
+		fmt.Println(el.CiRef)
+	}
+
+
+
+	return "", err
+}
+
+
+type (
+	List struct {
+		CIs         []Ci `xml:"ci"`
+	}
+
+	Ci struct {
+		CiRef         string    `xml:"ref,attr"`
+		Type            string `xml:"type,attr"`
+	}
+)
+
+
+type ByVersion [][]string
+
+func (versions ByVersion) Len() int {
+    return len(versions)
+}
+
+
+// Simple heuristic to avoid converting strings and integers
+// Please mind: A goes before AA and B goes before AA.
+// In other words, shorter strings go before longer.
+
+// Alternative:
+	//matcher := regexp.MustCompile("^[0-9]+$")
+	//sort
+	//	matcher.MatchString(el) -> true / false
+	// -> decide string vs int compare
+
+// TODO: if necessary, speed this up; now inefficient but not noticable
+
+const norm string = "0000000000"
+
+func normalizeLess(a string, b string) bool {
+	return (norm + a)[len(a):] < (norm + b)[len(b):]
+}
+
+func normalizeMore(a string, b string) bool {
+	return (norm + a)[len(a):] > (norm + b)[len(b):]
+}
+
+func less(versions ByVersion, index, i, j int) bool {
+	if normalizeLess(versions[i][index], versions[j][index]) {
+		return true
+	} else if normalizeMore(versions[i][index], versions[j][index]) {
+		return false
+	} else if index < len(versions[i]) - 1 {
+		return less(versions, index+1, i, j)
+	} else {
+		return false
+	}
+}
+
+func (versions ByVersion) Less(i, j int) bool {
+	return less(versions, 0, i, j)
+}
+func (versions ByVersion) Swap(i, j int) {
+    versions[i], versions[j] = versions[j], versions[i]
+}
+
+
+func readCiList(body []byte) (list List, err error) {
+	list = List{}
+	err = xml.Unmarshal(body, &list)
+	return
 }
 
 func update(args intf.Command) (result string, err error) {
@@ -160,8 +241,36 @@ func AntiAbbreviate(ciName string) string {
 	if longer != "" {		
 		ciName = longer + "/" + remainder
 	}
+
+	if strings.HasSuffix(ciName, "latest") {
+		searchFor := ciName[:len(ciName) - len("latest")]
+		body, err := http.Read("/repository/query?parent=" + searchFor)
+		list, err := readCiList(body)
+		if err != nil {
+			// TODO ERROR
+			return "error"
+		}
+
+		splitter := regexp.MustCompile("[\\.?\\-?_?]+")
+
+		versions := make([][]string, 0)
+		ciMap := make(map[string]Ci)
+		for _, el := range list.CIs {
+			version := el.CiRef[len(searchFor):]
+			
+			split := splitter.Split(version, -1)
+			ciMap[strings.Join(split, ".")] = el
+			versions = append(versions, split)
+		}
+		sort.Sort(ByVersion(versions))
+		ciName = ciMap[strings.Join(versions[len(versions) - 1], ".")].CiRef
+
+	}
+
 	return ciName
 }
+
+
 
 func mapStringString(kvPairs map[string]string) interface{} {
 	entry := make([]map[string]interface{}, 0)
