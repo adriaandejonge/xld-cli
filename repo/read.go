@@ -2,7 +2,6 @@ package repo
 
 import (
 	"errors"
-	"fmt"
 	"github.com/adriaandejonge/xld/metadata"
 	"github.com/adriaandejonge/xld/util/cmd"
 	"github.com/adriaandejonge/xld/util/http"
@@ -38,10 +37,9 @@ func read(args intf.Command) (result string, err error) {
 	for key, value := range values {
 		resultMap["type"] = key
 
-		ciType, errr := metadata.Type(key)
-		if errr != nil {
-			// TODO why errr? (shadowed err)
-			return "err", errr
+		ciType, err := metadata.Type(key)
+		if err != nil {
+			return "error", err
 		}
 
 		valueMap := value.(map[string]interface{})
@@ -62,87 +60,22 @@ func read(args intf.Command) (result string, err error) {
 					cleanProperties[k] = v.(string)
 
 				case "CI":
-					switch v.(type) {
-					case map[string]interface{}:
-						ciMap := v.(map[string]interface{})
-						ref := ciMap["-ref"]
-						cleanProperties[k] = ref.(string)
-					default:
-						cleanProperties[k] = ""
-					}
-
+					cleanProperties[k] = cleanRef(v)
+					
 				case "MAP_STRING_STRING":
-					switch v.(type) {
-					case map[string]interface{}:
-						resultMap := make(map[string]string)
-
-						rootMap := v.(map[string]interface{})
-						entries := rootMap["entry"].([]interface{})
-						for _, el := range entries {
-							keyVal := el.(map[string]interface{})
-							resultMap[keyVal["-key"].(string)] = keyVal["#text"].(string)
-						}
-
-						cleanProperties[k] = resultMap
-					default:
-						cleanProperties[k] = make(map[string]string)
-					}
+					cleanProperties[k] = cleanStringString(v)
 
 				case "SET_OF_STRING", "LIST_OF_STRING":
-					switch v.(type) {
-					case map[string]interface{}:
-						valuesMap := v.(map[string]interface{})
-						valuesArr := valuesMap["value"]
-						switch valuesArr.(type) {
-						case string:
-							cleanProperties[k] = []string{valuesArr.(string)}
-						case []interface{}:
-							intfArr := valuesArr.([]interface{})
-							stringArr := make([]string, len(intfArr))
-							for i, el := range intfArr {
-								stringArr[i] = el.(string)
-							}
-							cleanProperties[k] = stringArr
-						default:
-							// TODO Throw error?
-							cleanProperties[k] = make([]string, 0)
-							fmt.Println("   Key/val = ", k, v, kind)
-
-						}
-					default:
-						cleanProperties[k] = make([]string, 0)
-						fmt.Println("   Key/val = ", k, v, kind)
-
-					}
+					cleanProperties[k] = cleanSetOfStrings(v)
 
 				case "SET_OF_CI", "LIST_OF_CI":
-					if v != nil {
-						switch v.(type) {
-						case map[string]interface{}:
-
-							ciMapsIf := v.(map[string]interface{})["ci"]
-							ciMaps := ciMapsIf.([]interface{})
-
-							resultArr := make([]string, len(ciMaps))
-
-							for i, ciMap := range ciMaps {
-								ref := ciMap.(map[string]interface{})["-ref"]
-								resultArr[i] = ref.(string)
-							}
-
-							cleanProperties[k] = resultArr
-						default:
-							cleanProperties[k] = make([]string, 0)
-						}
-					}
+					cleanProperties[k] = cleanSetOfCis(v)
 
 				default:
 					return "error", errors.New("Unknown property kind " + kind + " --> XLD server newer than client?")
 
 				}
-
 			}
-
 		}
 	}
 
@@ -151,4 +84,113 @@ func read(args intf.Command) (result string, err error) {
 
 	return string(json), err
 
+}
+
+func cleanStringString(input interface{}) map[string]string {
+	empty := make(map[string]string)
+	if input != nil {
+		switch input.(type) {
+		case map[string]interface{}:
+			resultMap := make(map[string]string)
+
+			rootMap := input.(map[string]interface{})
+			entries := rootMap["entry"].([]interface{})
+			for _, el := range entries {
+				keyVal := el.(map[string]interface{})
+				resultMap[keyVal["-key"].(string)] = keyVal["#text"].(string)
+			}
+
+			return resultMap
+		default:
+			return empty
+		}
+	} else {
+		return empty
+	}	
+}
+
+func cleanSetOfStrings(input interface{}) []string {
+	empty := make([]string, 0)
+	if input != nil {
+		switch input.(type) {
+		case map[string]interface{}:
+			valuesMap := input.(map[string]interface{})
+			valuesArr := valuesMap["value"]
+			switch valuesArr.(type) {
+			case string:
+				return []string{valuesArr.(string)}
+			case []interface{}:
+				intfArr := valuesArr.([]interface{})
+				stringArr := make([]string, len(intfArr))
+				for i, el := range intfArr {
+					stringArr[i] = el.(string)
+				}
+				return stringArr
+			default:
+				return empty
+			}
+		default:
+			return empty
+		}
+	} else {
+		return empty
+	}	
+}
+
+func cleanSetOfCis(input interface{}) []string {
+	empty := make([]string, 0)
+	if input != nil {
+		switch input.(type) {
+		case map[string]interface{}:
+
+			ciMapsIf := input.(map[string]interface{})["ci"]
+
+ 			ciMaps := arrayOfMaps(ciMapsIf)
+
+			resultArr := make([]string, len(ciMaps))
+
+			for i, ciMap := range ciMaps {
+				ref := ciMap.(map[string]interface{})["-ref"]
+				resultArr[i] = ref.(string)
+			}
+
+			return resultArr
+		default:
+			return empty
+		}
+	} else {
+		return empty
+	}
+}
+
+func arrayOfMaps(input interface{}) []interface{} {
+	empty := make([]interface{}, 0)
+	if input != nil {
+		switch input.(type) {
+		case map[string]interface {}:
+			return []interface{} {input}
+		case []interface{}:
+			return input.([]interface{})
+		default:
+			return empty
+		}
+	} else {
+		return empty
+	}
+}
+
+func cleanRef(input interface{}) string {
+	empty := ""
+	if input != nil {
+		switch input.(type) {
+		case map[string]interface{}:
+			ciMap := input.(map[string]interface{})
+			ref := ciMap["-ref"]
+			return ref.(string)
+		default:
+			return empty
+		}
+	} else {
+		return empty
+	}
 }
