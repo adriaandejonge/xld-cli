@@ -64,10 +64,12 @@ func main() {
 			name := el.Name + "            "
 			name = name[:10]
 
-			fmt.Println(name, "-", el.Description)
+			if !el.Hidden {
+				fmt.Println(name, "-", el.Description)
+			}
 		}
 
-		fmt.Println("\nFor additional help on parameters, type: xld <command> help")
+		fmt.Println("\nFor additional help on parameters, type: xld help <command>")
 
 	}
 	if err != nil {

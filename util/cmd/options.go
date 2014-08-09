@@ -18,6 +18,7 @@ type (
 		Help        string
 		Permission  string // TODO []string instead?
 		MinArgs     int
+		Hidden		bool
 	}
 )
 
@@ -42,7 +43,7 @@ func (optionList *OptionList) Finder() Finder {
 		Description: "Additional help for commands",
 		Permission: "",
 		MinArgs:    1,
-		Help: "LONG HELP TEXT",
+		Hidden:     true,
 		
 	}
 	optionList.add(&HelpCmd)
