@@ -20,10 +20,10 @@ var commands cmd.OptionList = cmd.OptionList{
 	deploy.UpgradeCmd,
 	deploy.UndeployCmd,
 	repo.CreateCmd,
+	repo.ReadCmd,
 	repo.UpdateCmd,
 	repo.RemoveCmd,
 	repo.ListCmd,
-	//repo.ReadCmd,
 	metadata.DescribeCmd,
 	metadata.TypesCmd,
 }

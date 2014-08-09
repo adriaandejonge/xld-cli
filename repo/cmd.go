@@ -18,6 +18,18 @@ TODO:
 		MinArgs:    0,
 	}
 
+	ReadCmd cmd.Option = cmd.Option{
+		Do:          read,
+		Name:        "read",
+		Description: "Read configuration item",
+		Help: `
+TODO: 
+	Long, multi-line help text
+`,
+		Permission: "read",
+		MinArgs:    1,
+	}
+
 	UpdateCmd cmd.Option = cmd.Option{
 		Do:          update,
 		Name:        "update",
