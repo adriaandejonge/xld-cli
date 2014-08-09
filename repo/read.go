@@ -51,30 +51,12 @@ func read(args intf.Command) (result string, err error) {
 				resultMap[k[1:]] = v
 
 			} else {
-
-				kind := ciType.Prop(k).Kind
-
-				switch kind {
-
-				case "BOOLEAN", "INTEGER", "STRING", "ENUM":
-					cleanProperties[k] = v.(string)
-
-				case "CI":
-					cleanProperties[k] = cleanRef(v)
-					
-				case "MAP_STRING_STRING":
-					cleanProperties[k] = cleanStringString(v)
-
-				case "SET_OF_STRING", "LIST_OF_STRING":
-					cleanProperties[k] = cleanSetOfStrings(v)
-
-				case "SET_OF_CI", "LIST_OF_CI":
-					cleanProperties[k] = cleanSetOfCis(v)
-
-				default:
-					return "error", errors.New("Unknown property kind " + kind + " --> XLD server newer than client?")
-
+				cleanProperties[k], err = readProperty(k, v, ciType)
+				if err != nil {
+					return "error", err
 				}
+
+				
 			}
 		}
 	}
@@ -84,6 +66,33 @@ func read(args intf.Command) (result string, err error) {
 
 	return string(json), err
 
+}
+
+func readProperty(key string, value interface{}, ciType *metadata.CIType) (result interface{}, err error) {
+	kind := ciType.Prop(key).Kind
+
+	switch kind {
+
+	case "BOOLEAN", "INTEGER", "STRING", "ENUM":
+		result = value.(string)
+
+	case "CI":
+		result = cleanRef(value)
+		
+	case "MAP_STRING_STRING":
+		result = cleanStringString(value)
+
+	case "SET_OF_STRING", "LIST_OF_STRING":
+		result = cleanSetOfStrings(value)
+
+	case "SET_OF_CI", "LIST_OF_CI":
+		result = cleanSetOfCis(value)
+
+	default:
+		return "error", errors.New("Unknown property kind " + kind + " --> XLD server newer than client?")
+	}
+
+	return
 }
 
 func cleanStringString(input interface{}) map[string]string {
