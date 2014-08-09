@@ -16,8 +16,26 @@ var ReadCmd cmd.Option = cmd.Option{
 	Name:        "read",
 	Description: "Read configuration item",
 	Help: `
-TODO: 
-	Long, multi-line help text
+# XLD Read: 
+
+	Read a configuraton item from the repository and output JSON format.
+
+	Usage:
+
+	- xld read <id>
+
+	Examples:
+
+	- xld read env/MyEnv
+	- xld read inf/MyServer/MyTomcat
+
+	Note: env and inf are abbreviations for Environments and Infrastructure. You can also use the full names:
+
+	- xld read Infrastructure/MyServer
+
+	You can also use the abbreviation "latest" to automatically find the newest version of an application:
+
+	- xld read app/MyApp/latest
 `,
 	Permission: "read",
 	MinArgs:    1,
