@@ -10,8 +10,8 @@ var RemoveCmd cmd.Option = cmd.Option{
 	Do:          remove,
 	Name:        "remove",
 	Description: "Remove existing configuration item",
-	Permission: "import#remove", //repo#edit
-	MinArgs:    0,
+	Permission:  "import#remove", //repo#edit
+	MinArgs:     0,
 	Help: `
 TODO: 
 	Long, multi-line help text

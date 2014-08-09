@@ -13,8 +13,8 @@ var ListCmd cmd.Option = cmd.Option{
 	Do:          list,
 	Name:        "list",
 	Description: "List configuration items",
-	Permission: "",
-	MinArgs:    0,
+	Permission:  "",
+	MinArgs:     0,
 	Help: `
 TODO: 
 	Long, multi-line help text

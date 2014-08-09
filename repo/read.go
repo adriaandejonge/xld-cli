@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"encoding/json"
 	"errors"
 	"github.com/adriaandejonge/xld/metadata"
 	"github.com/adriaandejonge/xld/util/cmd"
@@ -8,36 +9,35 @@ import (
 	"github.com/adriaandejonge/xld/util/intf"
 	"github.com/clbanning/mxj/x2j"
 	"strings"
-	"encoding/json"
 )
 
 var ReadCmd cmd.Option = cmd.Option{
 	Do:          read,
 	Name:        "read",
 	Description: "Read configuration item",
-	Permission: "read",
-	MinArgs:    1,	
+	Permission:  "read",
+	MinArgs:     1,
 	Help: `
 # XLD Read: 
 
-	Read a configuraton item from the repository and output JSON format.
+Read a configuraton item from the repository and output JSON format.
 
-	Usage:
+Usage:
 
-	- xld read <id>
+- xld read <id>
 
-	Examples:
+Examples:
 
-	- xld read env/MyEnv
-	- xld read inf/MyServer/MyTomcat
+- xld read env/MyEnv
+- xld read inf/MyServer/MyTomcat
 
-	Note: env and inf are abbreviations for Environments and Infrastructure. You can also use the full names:
+Note: env and inf are abbreviations for Environments and Infrastructure. You can also use the full names:
 
-	- xld read Infrastructure/MyServer
+- xld read Infrastructure/MyServer
 
-	You can also use the abbreviation "latest" to automatically find the newest version of an application:
+You can also use the abbreviation "latest" to automatically find the newest version of an application:
 
-	- xld read app/MyApp/latest
+- xld read app/MyApp/latest
 `,
 }
 
@@ -71,7 +71,7 @@ func read(args intf.Command) (result string, err error) {
 				cleanProperties[k], err = readProperty(k, v, ciType)
 				if err != nil {
 					return "error", err
-				}				
+				}
 			}
 		}
 	}
@@ -93,7 +93,7 @@ func readProperty(key string, value interface{}, ciType *metadata.CIType) (resul
 
 	case "CI":
 		result = cleanRef(value)
-		
+
 	case "MAP_STRING_STRING":
 		result = cleanStringString(value)
 
@@ -130,7 +130,7 @@ func cleanStringString(input interface{}) map[string]string {
 		}
 	} else {
 		return empty
-	}	
+	}
 }
 
 func cleanSetOfStrings(input interface{}) []string {
@@ -158,7 +158,7 @@ func cleanSetOfStrings(input interface{}) []string {
 		}
 	} else {
 		return empty
-	}	
+	}
 }
 
 func cleanSetOfCis(input interface{}) []string {
@@ -169,7 +169,7 @@ func cleanSetOfCis(input interface{}) []string {
 
 			ciMapsIf := input.(map[string]interface{})["ci"]
 
- 			ciMaps := arrayOfMaps(ciMapsIf)
+			ciMaps := arrayOfMaps(ciMapsIf)
 
 			resultArr := make([]string, len(ciMaps))
 
@@ -191,8 +191,8 @@ func arrayOfMaps(input interface{}) []interface{} {
 	empty := make([]interface{}, 0)
 	if input != nil {
 		switch input.(type) {
-		case map[string]interface {}:
-			return []interface{} {input}
+		case map[string]interface{}:
+			return []interface{}{input}
 		case []interface{}:
 			return input.([]interface{})
 		default:

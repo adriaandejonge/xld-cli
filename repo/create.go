@@ -15,8 +15,8 @@ var CreateCmd cmd.Option = cmd.Option{
 	Do:          create,
 	Name:        "create",
 	Description: "Create new configuration item",
-	Permission: "repo#edit",
-	MinArgs:    0,
+	Permission:  "repo#edit",
+	MinArgs:     0,
 	Help: `
 TODO: 
 	Long, multi-line help text
