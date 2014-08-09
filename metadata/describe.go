@@ -10,12 +10,12 @@ var DescribeCmd cmd.Option = cmd.Option{
 	Do:          describe,
 	Name:        "describe",
 	Description: "Describe properties for configuration type",
+	Permission: "",
+	MinArgs:    1,
 	Help: `
 TODO: 
 	Long, multi-line help text
 `,
-	Permission: "",
-	MinArgs:    1,
 }
 
 func describe(args intf.Command) (result string, err error) {

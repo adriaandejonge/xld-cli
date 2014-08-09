@@ -15,6 +15,8 @@ var ReadCmd cmd.Option = cmd.Option{
 	Do:          read,
 	Name:        "read",
 	Description: "Read configuration item",
+	Permission: "read",
+	MinArgs:    1,	
 	Help: `
 # XLD Read: 
 
@@ -37,8 +39,6 @@ var ReadCmd cmd.Option = cmd.Option{
 
 	- xld read app/MyApp/latest
 `,
-	Permission: "read",
-	MinArgs:    1,
 }
 
 func read(args intf.Command) (result string, err error) {

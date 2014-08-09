@@ -10,12 +10,12 @@ var UpgradeCmd cmd.Option = cmd.Option{
 	Do:          upgrade,
 	Name:        "upgrade",
 	Description: "Updates an application deployment",
+	Permission: "deploy#upgrade",
+	MinArgs:    2,
 	Help: `
 TODO: 
 	Long, multi-line help text
 `,
-	Permission: "deploy#upgrade",
-	MinArgs:    2,
 }
 
 func upgrade(args intf.Command) (result string, err error) {

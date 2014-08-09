@@ -10,12 +10,12 @@ var DeployCmd cmd.Option = cmd.Option{
 	Do:          deploy,
 	Name:        "deploy",
 	Description: "Execute a deployment",
+	Permission: "deploy#initial",
+	MinArgs:    2,
 	Help: `
 TODO: 
 	Long, multi-line help text
 `,
-	Permission: "deploy#initial",
-	MinArgs:    2,
 }
 
 func deploy(args intf.Command) (result string, err error) {

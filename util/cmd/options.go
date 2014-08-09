@@ -36,7 +36,7 @@ func (optionList *OptionList) Finder() Finder {
 func (optionList *OptionList) List() (options []Option) {
 	options = make([]Option, 0)
 	for _, el := range *optionList {
-		// if permission ok
+		// TODO if permission ok
 		options = append(options, el)
 	}
 	return

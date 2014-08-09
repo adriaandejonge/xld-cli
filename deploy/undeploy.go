@@ -12,12 +12,12 @@ var UndeployCmd cmd.Option = cmd.Option{
 	Do:          undeploy,
 	Name:        "undeploy",
 	Description: "Uninstalls an application",
+	Permission: "deploy#undeploy",
+	MinArgs:    1,
 	Help: `
 TODO: 
 	Long, multi-line help text
 `,
-	Permission: "deploy#undeploy",
-	MinArgs:    1,
 }
 
 func undeploy(args intf.Command) (result string, err error) {

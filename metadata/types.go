@@ -12,12 +12,12 @@ var TypesCmd cmd.Option = cmd.Option{
 	Do:          types,
 	Name:        "types",
 	Description: "List configuration types",
+	Permission: "",
+	MinArgs:    0,
 	Help: `
 TODO: 
 	Long, multi-line help text
 `,
-	Permission: "",
-	MinArgs:    0,
 }
 
 func types(args intf.Command) (result string, err error) {

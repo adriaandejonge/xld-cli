@@ -13,12 +13,13 @@ var PlanCmd cmd.Option = cmd.Option{
 	Do:          plan,
 	Name:        "plan",
 	Description: "Display steps in a deployment",
+
+	Permission: "deploy#initial", // TODO Depends on initial / upgrade / remove
+	MinArgs:    2,
 	Help: `
 TODO: 
 	Long, multi-line help text
 `,
-	Permission: "deploy#initial", // TODO Depends on initial / upgrade / remove
-	MinArgs:    2,
 }
 
 func plan(args intf.Command) (result string, err error) {

@@ -9,11 +9,11 @@ var (
 		Do:          Do,
 		Name:        "login",
 		Description: "Provide URL, username and password",
+		Permission: "",
+		MinArgs:    3,
 		Help: `
 TODO: 
 	Long, multi-line help text
 `,
-		Permission: "",
-		MinArgs:    3,
 	}
 )

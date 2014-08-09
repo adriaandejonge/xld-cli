@@ -13,12 +13,12 @@ var ListCmd cmd.Option = cmd.Option{
 	Do:          list,
 	Name:        "list",
 	Description: "List configuration items",
+	Permission: "",
+	MinArgs:    0,
 	Help: `
 TODO: 
 	Long, multi-line help text
 `,
-	Permission: "",
-	MinArgs:    0,
 }
 
 func list(args intf.Command) (result string, err error) {
