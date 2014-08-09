@@ -18,7 +18,7 @@ type (
 		Help        string
 		Permission  string // TODO []string instead?
 		MinArgs     int
-		Hidden		bool
+		Hidden      bool
 	}
 )
 
@@ -27,24 +27,23 @@ func (optionList *OptionList) Finder() Finder {
 	index := make(map[string]Option)
 
 	var HelpCmd Option = Option{
-		Do:          func() Executer {
-						return func(args intf.Command) (result string, err error) {
-							subs := args.Subs()
-							if len(subs) > 0 {
-								option, ok := index[subs[0]]
-								if ok {
-									fmt.Println(option.Help)
-								}
-							}
-							return
-						}
-					}(),
+		Do: func() Executer {
+			return func(args intf.Command) (result string, err error) {
+				subs := args.Subs()
+				if len(subs) > 0 {
+					option, ok := index[subs[0]]
+					if ok {
+						fmt.Println(option.Help)
+					}
+				}
+				return
+			}
+		}(),
 		Name:        "help",
 		Description: "Additional help for commands",
-		Permission: "",
-		MinArgs:    1,
-		Hidden:     true,
-		
+		Permission:  "",
+		MinArgs:     1,
+		Hidden:      true,
 	}
 	optionList.add(&HelpCmd)
 
