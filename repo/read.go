@@ -6,9 +6,9 @@ import (
 	"github.com/adriaandejonge/xld/util/cmd"
 	"github.com/adriaandejonge/xld/util/http"
 	"github.com/adriaandejonge/xld/util/intf"
-	"github.com/clbanning/mxj/j2x"
 	"github.com/clbanning/mxj/x2j"
 	"strings"
+	"encoding/json"
 )
 
 var ReadCmd cmd.Option = cmd.Option{
@@ -45,7 +45,6 @@ func read(args intf.Command) (result string, err error) {
 		valueMap := value.(map[string]interface{})
 
 		for k, v := range valueMap {
-
 			if strings.HasPrefix(k, "-") {
 
 				resultMap[k[1:]] = v
@@ -54,15 +53,13 @@ func read(args intf.Command) (result string, err error) {
 				cleanProperties[k], err = readProperty(k, v, ciType)
 				if err != nil {
 					return "error", err
-				}
-
-				
+				}				
 			}
 		}
 	}
 
-	resultMap["props"] = cleanProperties
-	json, _ := j2x.MapToJson(resultMap)
+	resultMap["content"] = cleanProperties
+	json, _ := json.MarshalIndent(resultMap, "", "    ")
 
 	return string(json), err
 
