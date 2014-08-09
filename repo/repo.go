@@ -113,10 +113,7 @@ func read(args intf.Command) (result string, err error) {
 			return "err", errr
 		}
 
-		//fmt.Println(ciType)
-
 		valueMap := value.(map[string]interface{})
-		
 
 		for k, v := range valueMap {
 
@@ -222,9 +219,6 @@ func read(args intf.Command) (result string, err error) {
 		}
 	}
 
-	//fmt.Println("CLEAN PROPS = ", cleanProperties)
-
-	//retVal := fmt.Sprint("\n\nValues ", values)
 	resultMap["props"] = cleanProperties
 	json, _ := j2x.MapToJson(resultMap)
 
@@ -234,8 +228,6 @@ func read(args intf.Command) (result string, err error) {
 }
 
 func list(args intf.Command) (result string, err error) {
-	//http://localhost:4516/deployit/repository/query?ancestor=Environments
-
 	subs := args.Subs()
 
 	arguments := make([]string, 0)
