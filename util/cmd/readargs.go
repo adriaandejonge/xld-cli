@@ -16,18 +16,20 @@ func ReadArgs(args []string) (command intf.Command, err error) {
 
 	subs := subs(args, indices)
 
-	var arguments = make([]intf.Argument, 0)
-
-	if len(subs) > 0 && subs[len(subs)-1] == "stdin" {
-
-		bytes, err := ioutil.ReadAll(os.Stdin)
+	if len(subs) == 1 && subs[0] == "stdin" {
+		input, err := Stdin2Map()
 		if err != nil {
 			return nil, err
 		}
 
-		input := make(map[string]interface{})
+		return &StdinCmd{main, input}, nil
+	}	
 
-		err = json.Unmarshal(bytes, &input)
+	var arguments = make([]intf.Argument, 0)
+
+	if len(subs) > 0 && subs[len(subs)-1] == "stdin" {
+
+		input, err := Stdin2Map()
 		if err != nil {
 			return nil, err
 		}
