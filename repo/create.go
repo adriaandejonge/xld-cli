@@ -18,8 +18,77 @@ var CreateCmd cmd.Option = cmd.Option{
 	Permission:  "repo#edit",
 	MinArgs:     0,
 	Help: `
-TODO: 
-	Long, multi-line help text
+# XLD Create: 
+Create items in XL Deploy from command line.
+
+## Basic usage:
+
+xld create <type> <id> -<key> <value(s)>...
+
+## Advanced usage:
+
+ - To enter key-value pairs, you can pipe JSON or CSV as input:
+
+	<output json map> | xld create <type> <id> -<key> stdin:json
+	<ouput csv file> | xld create <type> <id> -<key> stdin:csv
+
+ - To enter the full content, you can pipe JSON:
+
+	<output json map> | xld create <type> <id> stdin:json
+
+ - To enter the full content, type and ID, you can pipe JSON:
+
+	<output json map> | xld create stdin:json
+
+Examples:
+
+xld create overthere.LocalHost inf/MyServer -os UNIX -tags one two three -temporaryDirectoryPath /tmp
+xld create dict env/MyDict -entries key1=value1 key2=value2
+xld create env env/MyEnv -members inf/MyServer -dictionaries env/MyDict
+
+
+Take a file myentries.json with the following content:
+
+{
+	"key1": "value1",
+	"key2": "value2"
+}
+
+and type:
+
+cat myentries.json | xld create dict env/MyDict -entries stdin:json
+
+Take a file mydict.json with the following content:
+
+{
+	"entries": {
+		"key1": "value1",
+		"key2": "value2"
+	}
+}
+
+and type:
+
+cat myentries.json | xld create dict env/MyDict stdin:json
+
+Take a file myitem.json with the following content:
+
+{
+    "content": {
+        "entries": {
+            "key1": "value1",
+            "key2": "value2"
+        }
+    },
+    "id": "env/MyDict",
+    "type": "dict"
+}
+
+and type:
+
+cat myentries.json | xld create stdin:json
+
+
 `,
 }
 
@@ -75,10 +144,10 @@ func create(args intf.Command) (result string, err error) {
 	}
 
 	id := ciName
-	if ciType.Root != "" {
+	id = AntiAbbreviate(id)
+	if ciType.Root != "" && !strings.HasPrefix(id, ciType.Root) {
 		id = ciType.Root + "/" + id
 	}
-	id = AntiAbbreviate(id)
 	mapProps["-id"] = id
 
 	final := map[string]interface{}{ciType.Type: mapProps}
