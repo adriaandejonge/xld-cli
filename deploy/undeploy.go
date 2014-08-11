@@ -24,15 +24,21 @@ func undeploy(args intf.Command) (result string, err error) {
 	subs := args.Subs()
 	appToUndeploy := repo.AntiAbbreviate(subs[0])
 	body, err := http.Read("/deployment/prepare/undeploy?deployedApplication=" + appToUndeploy)
-	// TODO Read error
+	if err != nil {
+		return
+	}
 
 	body, err = http.Create("/deployment", bytes.NewBuffer(body))
-	// TODO Read error
+	if err != nil {
+		return
+	}
 
 	taskId := string(body)
 
 	body, err = http.Create("/task/"+string(body)+"/start", nil)
-	// TODO Read error
+	if err != nil {
+		return
+	}
 
 	displayStatus(taskId)
 

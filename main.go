@@ -59,7 +59,7 @@ func main() {
 		// TODO if not logged in or env var; show how
 
 		fmt.Println("XL Deploy Command Line Alternative - EXPERIMENTAL v0.1")
-		fmt.Println("Created by Adriaan de Jonge - July, 2014")
+		fmt.Println("Created by Adriaan de Jonge - August, 2014")
 
 		fmt.Println("\nUsage: xld <command> <params...>\n\nCommands\n")
 

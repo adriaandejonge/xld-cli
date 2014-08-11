@@ -25,8 +25,7 @@ func types(args intf.Command) (result string, err error) {
 	if err != nil {
 		return
 	}
-	// TODO check statuscode
-
+	
 	list := List{}
 	err = xml.Unmarshal(body, &list)
 	if err != nil {

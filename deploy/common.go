@@ -17,12 +17,11 @@ import (
 func prepare(args intf.Command) (result string, err error) {
 	subs := args.Subs()
 	appVersion := repo.AntiAbbreviate(subs[0])
-	targetEnv := repo.AntiAbbreviate(subs[1]) // or 2?
+	targetEnv := repo.AntiAbbreviate(subs[1])
 
 	parts := strings.Split(appVersion, "/")
 
 	app := parts[len(parts)-2]
-	//version := parts[len(parts) - 1]
 
 	deployment := map[string]interface{}{
 		"deployment": map[string]interface{}{
@@ -65,7 +64,9 @@ func displayStatus(taskId string) {
 
 		// TODO support parallel deployments
 		body, err := http.Read("/task/" + taskId + "/step")
-		// TODO Read error
+		if err != nil {
+			return
+		}
 
 		task := Task{}
 		err = xml.Unmarshal(body, &task)

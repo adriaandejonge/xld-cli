@@ -127,7 +127,6 @@ func create(args intf.Command) (result string, err error) {
 
 	mapProps := make(map[string]interface{})
 
-	//props := args[2:]
 	props := args.Arguments()
 	for _, prop := range props {
 		key := prop.Name()

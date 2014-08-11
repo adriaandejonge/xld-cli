@@ -26,7 +26,9 @@ func plan(args intf.Command) (result string, err error) {
 	result, err = prepare(args)
 
 	body, err := http.Read("/task/" + result + "/step")
-	// TODO Read err
+	if err != nil {
+		return
+	}
 
 	task := Task{}
 	err = xml.Unmarshal(body, &task)

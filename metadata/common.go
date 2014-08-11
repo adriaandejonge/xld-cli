@@ -17,8 +17,7 @@ func Type(typeName string) (retType *CIType, err error) {
 	if err != nil {
 		return
 	}
-	// TODO check statuscode
-
+	
 	ciType := CIType{}
 	err = xml.Unmarshal(body, &ciType)
 
