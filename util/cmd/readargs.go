@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func ReadArgs(args []string) intf.Command {
+func ReadArgs(args []string) (command intf.Command, err error) {
 	indices := indexDashes(args)
 
 	main := mainArgument(args)
@@ -22,14 +22,14 @@ func ReadArgs(args []string) intf.Command {
 
 		bytes, err := ioutil.ReadAll(os.Stdin)
 		if err != nil {
-			// TODO THROW ERROR
+			return nil, err
 		}
 
 		input := make(map[string]interface{})
 
 		err = json.Unmarshal(bytes, &input)
 		if err != nil {
-			// TODO THROW ERROR
+			return nil, err
 		}
 
 		for k, v := range input {
@@ -40,7 +40,7 @@ func ReadArgs(args []string) intf.Command {
 		arguments = cmdArguments(args, indices)
 	}
 
-	return &MainCmd{main, subs, arguments}
+	return &MainCmd{main, subs, arguments}, nil
 }
 
 func indexDashes(args []string) (indices []int) {

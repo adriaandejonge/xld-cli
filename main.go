@@ -30,9 +30,13 @@ var commands cmd.OptionList = cmd.OptionList{
 
 func main() {
 
-	args := cmd.ReadArgs(os.Args[1:])
+	args, err := cmd.ReadArgs(os.Args[1:])
+	if err != nil {
+		fmt.Println("ERROR", err)
+		os.Exit(1)
 
-	var err error
+	}
+
 	var result string
 
 	finder := commands.Finder()
@@ -74,8 +78,10 @@ func main() {
 	}
 	if err != nil {
 		fmt.Println("ERROR", err)
+		os.Exit(1)
 	} else if result != "" {
 		fmt.Println(result)
+		os.Exit(0)
 	}
 
 }
