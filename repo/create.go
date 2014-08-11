@@ -19,6 +19,7 @@ var CreateCmd cmd.Option = cmd.Option{
 	MinArgs:     0,
 	Help: `
 # XLD Create: 
+
 Create items in XL Deploy from command line.
 
 ## Basic usage:
@@ -30,20 +31,23 @@ xld create <type> <id> -<key> <value(s)>...
  - To enter key-value pairs, you can pipe JSON or CSV as input:
 
 	<output json map> | xld create <type> <id> -<key> stdin:json
+
 	<ouput csv file> | xld create <type> <id> -<key> stdin:csv
 
  - To enter the full content, you can pipe JSON:
 
-	<output json map> | xld create <type> <id> stdin:json
+	<output json map> | xld create <type> <id> stdin
 
  - To enter the full content, type and ID, you can pipe JSON:
 
-	<output json map> | xld create stdin:json
+	<output json map> | xld create stdin
 
 Examples:
 
 xld create overthere.LocalHost inf/MyServer -os UNIX -tags one two three -temporaryDirectoryPath /tmp
+
 xld create dict env/MyDict -entries key1=value1 key2=value2
+
 xld create env env/MyEnv -members inf/MyServer -dictionaries env/MyDict
 
 
@@ -88,6 +92,20 @@ and type:
 
 cat myentries.json | xld create stdin:json
 
+Abbreviations
+
+XLD allows the following abbreviations for item types:
+
+env -> udm.Environment
+dict -> udm.Dictionary
+dir -> udm.Directory
+
+XLD allows the following abbreviations for ID paths:
+
+app -> Applications
+env -> Environments
+inf -> Infrastructure
+conf -> Configuration
 
 `,
 }
