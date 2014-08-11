@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"github.com/adriaandejonge/xld/util/intf"
@@ -103,7 +104,16 @@ func cmdArguments(args []string, indices []int) (arguments []intf.Argument) {
 					arguments[i] = &JsonArg{cmdArg.name, input}
 
 				case "csv":
-					fmt.Println("csv not yet implemented")
+
+					reader := csv.NewReader(os.Stdin)
+					
+					records, err := reader.ReadAll()
+					if err != nil {
+						// TODO THROW ERROR
+						fmt.Println("Error reading CVS")
+					}
+
+					arguments[i] = &CsvArg{cmdArg.name, records}
 
 				}
 
