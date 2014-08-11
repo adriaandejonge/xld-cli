@@ -35,7 +35,7 @@ func AntiAbbreviate(ciName string) string {
 		searchFor := ciName[:len(ciName)-len("latest")]
 		body, err := http.Read("/repository/query?parent=" + searchFor)
 		list, err := readCiList(body)
-		if err != nil {
+		if err != nil || len(list.CIs) == 0 {
 			// TODO ERROR
 			return "error"
 		}
