@@ -19,13 +19,18 @@ TODO:
 }
 
 func remove(args intf.Command) (result string, err error) {
-	subs := args.Subs()
-	ciName := AntiAbbreviate(subs[0])
-	// TODO validate input
 
-	body, err := http.Remove("/repository/ci/" + ciName)
+	for _, sub := range args.Subs() {
+		ciName := AntiAbbreviate(sub)
+		// TODO validate input
 
-	result = string(body)
+		body, err := http.Remove("/repository/ci/" + ciName)
+		if err != nil {
+			return "error", err
+		}
+
+		result = string(body)
+	}
 
 	return
 }
