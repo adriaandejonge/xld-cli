@@ -33,22 +33,31 @@ func prepare(args intf.Command, depType string) (result string, err error) {
 
 	app := parts[len(parts)-2]
 
+	deployedApplication := map[string]interface{}{
+		"-id": targetEnv + "/" + app,
+		"version": map[string]interface{}{
+			"-ref": appVersion,
+		},
+		"environment": map[string]interface{}{
+			"-ref": targetEnv,
+		},
+		"optimizePlan": "true",
+	}
+
 	deployment := map[string]interface{}{
 		"deployment": map[string]interface{}{
 			"-type": depType,
 			"application": map[string]interface{}{
-				"udm.DeployedApplication": map[string]interface{}{
-					"-id": targetEnv + "/" + app,
-					"version": map[string]interface{}{
-						"-ref": appVersion,
-					},
-					"environment": map[string]interface{}{
-						"-ref": targetEnv,
-					},
-					"optimizePlan": "true",
-				},
+				"udm.DeployedApplication": deployedApplication,
 			},
 		},
+	}
+
+	for _, arg := range args.Arguments() {
+		if arg.Name() == "orchestrator" {
+			deployedApplication["orchestrator"] = 
+				repo.MapSetOfStrings(arg.Values()) 
+		}
 	}
 
 	/*

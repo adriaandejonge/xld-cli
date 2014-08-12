@@ -59,6 +59,11 @@ func AntiAbbreviate(ciName string) string {
 	return ciName
 }
 
+func MapSetOfStrings(values []string) interface{} {
+	return mapSetOfStrings(values)
+}
+
+
 // Simple heuristic to avoid converting strings and integers
 // Please mind: A goes before AA and B goes before AA.
 // In other words, shorter strings go before longer.
