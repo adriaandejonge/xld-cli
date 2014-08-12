@@ -51,6 +51,13 @@ func prepare(args intf.Command, depType string) (result string, err error) {
 		},
 	}
 
+	/*
+      <orchestrator>
+        <value>parallel-by-composite-package</value>
+        <value>parallel-by-container</value>
+      </orchestrator>
+	*/
+
 	// TODO Make this a util?
 	json, _ := j2x.MapToJson(deployment)
 	xml, _ := j2x.JsonToXml(json)

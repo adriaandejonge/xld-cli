@@ -15,7 +15,8 @@ import (
 var commands cmd.OptionList = cmd.OptionList{
 	login.LoginCmd,
 	//login.LoutoutCmd
-	deploy.PlanCmd,
+	deploy.PlanDeployCmd,
+	deploy.PlanUpgradeCmd,
 	deploy.DeployCmd,
 	deploy.UpgradeCmd,
 	deploy.UndeployCmd,
@@ -65,8 +66,8 @@ func main() {
 
 		for _, el := range commands.List() {
 
-			name := el.Name + "            "
-			name = name[:10]
+			name := el.Name + "              "
+			name = name[:12]
 
 			if !el.Hidden {
 				fmt.Println(name, "-", el.Description)
