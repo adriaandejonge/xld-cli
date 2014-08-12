@@ -14,7 +14,17 @@ import (
 	"time"
 )
 
-func prepare(args intf.Command) (result string, err error) {
+func execute(args intf.Command, depType string) (result string, err error) {
+	result, err = prepare(args, depType)
+
+	body, err := http.Create("/task/"+result+"/start", nil)
+
+	displayStatus(result)
+
+	return string(body), err
+}
+
+func prepare(args intf.Command, depType string) (result string, err error) {
 	subs := args.Subs()
 	appVersion := repo.AntiAbbreviate(subs[0])
 	targetEnv := repo.AntiAbbreviate(subs[1])
@@ -25,7 +35,7 @@ func prepare(args intf.Command) (result string, err error) {
 
 	deployment := map[string]interface{}{
 		"deployment": map[string]interface{}{
-			"-type": "INITIAL",
+			"-type": depType,
 			"application": map[string]interface{}{
 				"udm.DeployedApplication": map[string]interface{}{
 					"-id": targetEnv + "/" + app,

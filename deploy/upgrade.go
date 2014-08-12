@@ -1,7 +1,6 @@
 package deploy
 
 import (
-	"errors"
 	"github.com/adriaandejonge/xld/util/cmd"
 	"github.com/adriaandejonge/xld/util/intf"
 )
@@ -19,5 +18,5 @@ TODO:
 }
 
 func upgrade(args intf.Command) (result string, err error) {
-	return "error", errors.New("Update is not yet implemented")
+	return execute(args, "UPDATE")
 }

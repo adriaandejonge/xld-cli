@@ -23,7 +23,7 @@ TODO:
 }
 
 func plan(args intf.Command) (result string, err error) {
-	result, err = prepare(args)
+	result, err = prepare(args, "INITIAL") //depends
 
 	body, err := http.Read("/task/" + result + "/step")
 	if err != nil {

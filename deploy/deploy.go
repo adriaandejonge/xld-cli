@@ -2,7 +2,6 @@ package deploy
 
 import (
 	"github.com/adriaandejonge/xld/util/cmd"
-	"github.com/adriaandejonge/xld/util/http"
 	"github.com/adriaandejonge/xld/util/intf"
 )
 
@@ -19,11 +18,5 @@ TODO:
 }
 
 func deploy(args intf.Command) (result string, err error) {
-	result, err = prepare(args)
-
-	body, err := http.Create("/task/"+result+"/start", nil)
-
-	displayStatus(result)
-
-	return string(body), err
+	return execute(args, "INITIAL")
 }
