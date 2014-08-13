@@ -12,8 +12,17 @@ var (
 		Permission: "",
 		MinArgs:    3,
 		Help: `
-TODO: 
-	Long, multi-line help text
+# XLD Login: 
+
+Provide login details for XL Deploy server. Credentials are stored base64 encoded in a .xld file in the root of your user profile for reuse in subsequent requests.
+
+Usage:
+
+ - xld login <server> <username> <password>
+
+Example:
+
+ - xld login localhost:4516 admin $ecr3tP@ssw0rd
 `,
 	}
 )
