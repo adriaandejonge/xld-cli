@@ -17,7 +17,7 @@ var PlanInitialCmd cmd.Option = cmd.Option{
 	Permission: "deploy#initial",
 	MinArgs:    2,
 	Help: `
-# XLD Plan-initial: 
+# xld plan-initial <app id> <env id>
 
 Show the steps for an initial deployment without executing. For execution, see xld initial
 
@@ -39,7 +39,7 @@ var PlanUpdateCmd cmd.Option = cmd.Option{
 	Permission: "deploy#update",
 	MinArgs:    2,
 	Help: `
-# XLD Plan-update: 
+# xld plan-update <app id> <env id>
 
 Show the steps for an update deployment without executing. For execution, see xld update
 

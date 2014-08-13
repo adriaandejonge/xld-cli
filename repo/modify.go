@@ -13,7 +13,7 @@ var ModifyCmd cmd.Option = cmd.Option{
 	Permission:  "repo#edit",
 	MinArgs:     0,
 	Help: `
-# XLD Modify: 
+# xld modify
 
 Not yet implemented
 `,

@@ -16,7 +16,7 @@ var ListCmd cmd.Option = cmd.Option{
 	Permission:  "",
 	MinArgs:     0,
 	Help: `
-# XLD List: 
+# xld list <item id> -<arg(s)> <query(s)>
 
 Search for items in the repository
 

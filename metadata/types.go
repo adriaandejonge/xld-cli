@@ -15,7 +15,7 @@ var TypesCmd cmd.Option = cmd.Option{
 	Permission: "",
 	MinArgs:    0,
 	Help: `
-# XLD Types: 
+# xld types
 
 Prints the list of item types installed in the XL Deploy server you connected to
 

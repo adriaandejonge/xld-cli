@@ -15,7 +15,7 @@ var UndeployCmd cmd.Option = cmd.Option{
 	Permission: "deploy#undeploy",
 	MinArgs:    1,
 	Help: `
-# XLD Undeploy: 
+# xld undeploy <deployed app id>
 
 Uninstall an application from a container.
 

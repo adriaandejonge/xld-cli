@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 	"github.com/adriaandejonge/xld/util/intf"
 )
 
@@ -32,8 +33,12 @@ func (optionList *OptionList) Finder() Finder {
 				subs := args.Subs()
 				if len(subs) > 0 {
 					if subs[0] == "all" {
-						for _, el := range index {
-							fmt.Println(el.Help)
+						fmt.Println("# XLD Command Line Interface\n ## _EXPERIMENTAL_")
+						for _, el := range *optionList {
+							formatted := strings.Replace(el.Help, "#", "##", -1)
+							formatted = strings.Replace(formatted, "<", "&lt;", -1)
+							formatted = strings.Replace(formatted, ">", "&gt;", -1)
+							fmt.Println(formatted)
 						}
 					}
 

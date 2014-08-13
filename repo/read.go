@@ -18,7 +18,7 @@ var ReadCmd cmd.Option = cmd.Option{
 	Permission:  "read",
 	MinArgs:     1,
 	Help: `
-# XLD Read: 
+# xld read <id>
 
 Read a configuraton item from the repository and output JSON format.
 

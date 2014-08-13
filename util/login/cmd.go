@@ -12,7 +12,7 @@ var (
 		Permission: "",
 		MinArgs:    3,
 		Help: `
-# XLD Login: 
+# xld login <server> <username> <password>
 
 Provide login details for XL Deploy server. Credentials are stored base64 encoded in a .xld file in the root of your user profile for reuse in subsequent requests.
 

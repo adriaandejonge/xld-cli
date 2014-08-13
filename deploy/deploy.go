@@ -12,7 +12,7 @@ var InitialCmd cmd.Option = cmd.Option{
 	Permission: "deploy#initial",
 	MinArgs:    2,
 	Help: `
-# XLD Initial: 
+# xld initial <app id> <env id>
 
 Executes an initial deployment. This explicitly does *not* work for upgrade deployments. Use xld deploy to deploy regardless of intitial/upgrade.
 
@@ -37,7 +37,7 @@ var DeployCmd cmd.Option = cmd.Option{
 	Permission: "deploy#initial",
 	MinArgs:    2,
 	Help: `
-# XLD Deploy: 
+# xld deploy <app id> <env id>
 
 Executes a deployment, either initial or update. If you need to make a distinction, use xld initial or xld update instead.
 

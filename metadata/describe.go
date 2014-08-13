@@ -13,13 +13,13 @@ var DescribeCmd cmd.Option = cmd.Option{
 	Permission: "",
 	MinArgs:    1,
 	Help: `
-# XLD Describe: 
+# xld describe <item type(s)>
 
 Print properties and property type for item type(s).
 
 Usage:
 
- - xld describe <item type(s)
+ - xld describe <item type(s)>
 
 Examples:
 

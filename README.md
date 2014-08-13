@@ -1,7 +1,7 @@
 # XLD Command Line Interface
  ## _EXPERIMENTAL_
 
-## xld login
+## xld login &lt;server&gt; &lt;username&gt; &lt;password&gt;
 
 Provide login details for XL Deploy server. Credentials are stored base64 encoded in a .xld file in the root of your user profile for reuse in subsequent requests.
 
@@ -14,7 +14,7 @@ Example:
  - xld login localhost:4516 admin $ecr3tP@ssw0rd
 
 
-## xld deploy
+## xld deploy &lt;app id&gt; &lt;env id&gt;
 
 Executes a deployment, either initial or update. If you need to make a distinction, use xld initial or xld update instead.
 
@@ -31,7 +31,7 @@ Examples:
  - xld deploy app/MyComp/3.0 env/MyEnv -orchestrator parallel-by-container parallel-by-composite-package
 
 
-## xld undeploy
+## xld undeploy &lt;deployed app id&gt;
 
 Uninstall an application from a container.
 
@@ -45,7 +45,7 @@ Example:
 
 
 
-## xld initial
+## xld initial &lt;app id&gt; &lt;env id&gt;
 
 Executes an initial deployment. This explicitly does *not* work for upgrade deployments. Use xld deploy to deploy regardless of intitial/upgrade.
 
@@ -62,7 +62,7 @@ Examples:
  - xld initial app/MyComp/1.0 env/MyEnv -orchestrator parallel-by-container parallel-by-composite-package
 
 
-## xld update 
+## xld update &lt;app id&gt; &lt;env id&gt;
 
 Executes an update deployment. This explicitly does *not* work for initial deployments. Use xld deploy to deploy regardless of intitial/upgrade.
 
@@ -75,7 +75,7 @@ Examples:
  - xld update app/MyApp/2.0 env/MyEnv
 
 
-## xld plan-initial
+## xld plan-initial &lt;app id&gt; &lt;env id&gt;
 
 Show the steps for an initial deployment without executing. For execution, see xld initial
 
@@ -88,7 +88,7 @@ Example:
  - xld plan-initial app/MyApp/1.0 env/MyEnv
 
 
-## xld plan-update
+## xld plan-update &lt;app id&gt; &lt;env id&gt;
 
 Show the steps for an update deployment without executing. For execution, see xld update
 
@@ -101,7 +101,7 @@ Example:
  - xld plan-update app/MyApp/2.0 env/MyEnv
 
 
-## xld create
+## xld create &lt;type&gt; &lt;id&gt; -&lt;key&gt; &lt;value(s)&gt;...
 
 Create items in XL Deploy from command line.
 
@@ -192,7 +192,7 @@ conf -&gt; Configuration
 
 
 
-## xld read
+## xld read &lt;id&gt;
 
 Read a configuraton item from the repository and output JSON format.
 
@@ -219,13 +219,13 @@ You can also use the abbreviation "latest" to automatically find the newest vers
 Not yet implemented
 
 
-## xld remove
+## xld remove &lt;item id(s)&gt;
 
 Delete an item from the repository.
 
 Usage:
 
- - xld remove &lt;item id(s)
+ - xld remove &lt;item id(s)&gt;
 
 Examples:
 
@@ -234,7 +234,7 @@ Examples:
  - xld remove $(xld list -like %My%)
 
 
-## xld list
+## xld list &lt;item id&gt; -&lt;arg(s)&gt; &lt;query(s)&gt;
 
 Search for items in the repository
 
@@ -257,13 +257,13 @@ For all items with "Csv" in the name, type:
  - xld list -like %Csv%
 
 
-## xld describe 
+## xld describe &lt;item type(s)&gt;
 
 Print properties and property type for item type(s).
 
 Usage:
 
- - xld describe &lt;item type(s)
+ - xld describe &lt;item type(s)&gt;
 
 Examples:
 

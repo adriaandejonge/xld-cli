@@ -18,7 +18,7 @@ var CreateCmd cmd.Option = cmd.Option{
 	Permission:  "repo#edit",
 	MinArgs:     1,
 	Help: `
-# XLD Create: 
+# xld create <type> <id> -<key> <value(s)>...
 
 Create items in XL Deploy from command line.
 
