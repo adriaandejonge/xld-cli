@@ -16,8 +16,27 @@ var ListCmd cmd.Option = cmd.Option{
 	Permission:  "",
 	MinArgs:     0,
 	Help: `
-TODO: 
-	Long, multi-line help text
+# XLD List: 
+
+Search for items in the repository
+
+Usage:
+
+ - xld list <item id> -type <type> -like <query> -before <time indication> -after <..> -page <#> -pagesize <#>
+
+Example:
+
+For all the direct children of Applications, type:
+
+ - xld list app
+
+For all the direct children and descendants of Applications, type:
+
+ - xld list app/*
+
+For all items with "Csv" in the name, type:
+
+ - xld list -like %Csv%
 `,
 }
 

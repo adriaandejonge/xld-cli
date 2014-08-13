@@ -13,8 +13,9 @@ var ModifyCmd cmd.Option = cmd.Option{
 	Permission:  "repo#edit",
 	MinArgs:     0,
 	Help: `
-TODO: 
-	Long, multi-line help text
+# XLD Modify: 
+
+Not yet implemented
 `,
 }
 

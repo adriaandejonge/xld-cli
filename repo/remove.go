@@ -13,8 +13,19 @@ var RemoveCmd cmd.Option = cmd.Option{
 	Permission:  "import#remove", //repo#edit
 	MinArgs:     1,
 	Help: `
-TODO: 
-	Long, multi-line help text
+# XLD Remove: 
+
+Delete an item from the repository.
+
+Usage:
+
+ - xld remove <item id(s)
+
+Examples:
+
+ - xld remove env/MyEnv
+
+ - xld remove $(xld list -like %My%)
 `,
 }
 
