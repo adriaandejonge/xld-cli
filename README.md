@@ -1,37 +1,5 @@
-# XLD Command Line Interface EXPERIMENTAL
-
-## XLD Plan-update: 
-
-Show the steps for an update deployment without executing. For execution, see xld update
-
-Usage:
-
- - xld plan-update <app id> <env id>
-
-Example:
-
- - xld plan-update app/MyApp/2.0 env/MyEnv
-
-
-## xld modify
-
-Not yet implemented
-
-
-## xld remove
-
-Delete an item from the repository.
-
-Usage:
-
- - xld remove <item id(s)
-
-Examples:
-
- - xld remove env/MyEnv
-
- - xld remove $(xld list -like %My%)
-
+# XLD Command Line Interface
+ ## _EXPERIMENTAL_
 
 ## xld login
 
@@ -44,6 +12,93 @@ Usage:
 Example:
 
  - xld login localhost:4516 admin $ecr3tP@ssw0rd
+
+
+## xld deploy
+
+Executes a deployment, either initial or update. If you need to make a distinction, use xld initial or xld update instead.
+
+Usage:
+
+ - xld deploy <app id> <env id>
+
+ - xld deploy <app id> <env id> -orchestrator <orchestrator(s)>
+
+Examples:
+
+ - xld deploy app/MyApp/2.0 env/MyEnv
+
+ - xld deploy app/MyComp/3.0 env/MyEnv -orchestrator parallel-by-container parallel-by-composite-package
+
+
+## xld undeploy
+
+Uninstall an application from a container.
+
+Usage:
+
+ - xld undeploy <deployed app id>
+
+Example:
+
+ - xld undeploy env/MyEnv/MyApp
+
+
+
+## xld initial
+
+Executes an initial deployment. This explicitly does *not* work for upgrade deployments. Use xld deploy to deploy regardless of intitial/upgrade.
+
+Usage:
+
+ - xld initial <app id> <env id>
+
+ - xld initial <app id> <env id> -orchestrator <orchestrator(s)>
+
+Examples:
+
+ - xld initial app/MyApp/1.0 env/MyEnv
+
+ - xld initial app/MyComp/1.0 env/MyEnv -orchestrator parallel-by-container parallel-by-composite-package
+
+
+## xld update 
+
+Executes an update deployment. This explicitly does *not* work for initial deployments. Use xld deploy to deploy regardless of intitial/upgrade.
+
+Usage:
+
+ - xld update <app id> <env id>
+
+Examples:
+
+ - xld update app/MyApp/2.0 env/MyEnv
+
+
+## xld plan-initial
+
+Show the steps for an initial deployment without executing. For execution, see xld initial
+
+Usage:
+
+ - xld plan-initial <app id> <env id>
+
+Example:
+
+ - xld plan-initial app/MyApp/1.0 env/MyEnv
+
+
+## xld plan-update
+
+Show the steps for an update deployment without executing. For execution, see xld update
+
+Usage:
+
+ - xld plan-update <app id> <env id>
+
+Example:
+
+ - xld plan-update app/MyApp/2.0 env/MyEnv
 
 
 ## xld create
@@ -137,44 +192,46 @@ conf -> Configuration
 
 
 
+## xld read
 
-## xld update 
-
-Executes an update deployment. This explicitly does *not* work for initial deployments. Use xld deploy to deploy regardless of intitial/upgrade.
+Read a configuraton item from the repository and output JSON format.
 
 Usage:
 
- - xld update <app id> <env id>
+- xld read <id>
 
 Examples:
 
- - xld update app/MyApp/2.0 env/MyEnv
+- xld read env/MyEnv
+- xld read inf/MyServer/MyTomcat
+
+Note: env and inf are abbreviations for Environments and Infrastructure. You can also use the full names:
+
+- xld read Infrastructure/MyServer
+
+You can also use the abbreviation "latest" to automatically find the newest version of an application:
+
+- xld read app/MyApp/latest
 
 
-## xld plan-initial
+## xld modify
 
-Show the steps for an initial deployment without executing. For execution, see xld initial
+Not yet implemented
+
+
+## xld remove
+
+Delete an item from the repository.
 
 Usage:
 
- - xld plan-initial <app id> <env id>
+ - xld remove <item id(s)
 
-Example:
+Examples:
 
- - xld plan-initial app/MyApp/1.0 env/MyEnv
+ - xld remove env/MyEnv
 
-
-## xld types
-
-Prints the list of item types installed in the XL Deploy server you connected to
-
-Usage:
- 
- - xld types
-
-Examples
-
- - xld types | grep tomcat
+ - xld remove $(xld list -like %My%)
 
 
 ## xld list
@@ -217,72 +274,16 @@ Examples:
  - xld describe $(xld types | grep tomcat)
 
 
-## XLD Deploy: 
+## xld types
 
-Executes a deployment, either initial or update. If you need to make a distinction, use xld initial or xld update instead.
-
-Usage:
-
- - xld deploy <app id> <env id>
-
- - xld deploy <app id> <env id> -orchestrator <orchestrator(s)>
-
-Examples:
-
- - xld deploy app/MyApp/2.0 env/MyEnv
-
- - xld deploy app/MyComp/3.0 env/MyEnv -orchestrator parallel-by-container parallel-by-composite-package
-
-
-## xld undeploy
-
-Uninstall an application from a container.
+Prints the list of item types installed in the XL Deploy server you connected to
 
 Usage:
+ 
+ - xld types
 
- - xld undeploy <deployed app id>
+Examples
 
-Example:
+ - xld types | grep tomcat
 
- - xld undeploy env/MyEnv/MyApp
-
-
-
-## xld initial
-
-Executes an initial deployment. This explicitly does *not* work for upgrade deployments. Use xld deploy to deploy regardless of intitial/upgrade.
-
-Usage:
-
- - xld initial <app id> <env id>
-
- - xld initial <app id> <env id> -orchestrator <orchestrator(s)>
-
-Examples:
-
- - xld initial app/MyApp/1.0 env/MyEnv
-
- - xld initial app/MyComp/1.0 env/MyEnv -orchestrator parallel-by-container parallel-by-composite-package
-
-
-## xld read
-
-Read a configuraton item from the repository and output JSON format.
-
-Usage:
-
-- xld read <id>
-
-Examples:
-
-- xld read env/MyEnv
-- xld read inf/MyServer/MyTomcat
-
-Note: env and inf are abbreviations for Environments and Infrastructure. You can also use the full names:
-
-- xld read Infrastructure/MyServer
-
-You can also use the abbreviation "latest" to automatically find the newest version of an application:
-
-- xld read app/MyApp/latest
 
