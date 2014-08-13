@@ -12,8 +12,17 @@ var UpdateCmd cmd.Option = cmd.Option{
 	Permission: "deploy#upgrade",
 	MinArgs:    2,
 	Help: `
-TODO: 
-	Long, multi-line help text
+# XLD Initial: 
+
+Executes an update deployment. This explicitly does *not* work for initial deployments. Use xld deploy to deploy regardless of intitial/upgrade.
+
+Usage:
+
+ - xld update <app id> <env id>
+
+Examples:
+
+ - xld update app/MyApp/2.0 env/MyEnv
 `,
 }
 
