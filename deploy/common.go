@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/xml"
 	"fmt"
+	"errors"
 	"github.com/adriaandejonge/xld/repo"
 	"github.com/adriaandejonge/xld/util/http"
 	"github.com/adriaandejonge/xld/util/intf"
@@ -11,13 +12,20 @@ import (
 	"github.com/clbanning/mxj/j2x"
 
 	"strings"
+	"strconv"
 	"time"
 )
 
 func execute(args intf.Command, depType string) (result string, err error) {
 	result, err = prepare(args, depType)
+	if err != nil {
+		return
+	}
 
 	body, err := http.Create("/task/"+result+"/start", nil)
+	if err != nil {
+		return
+	}
 
 	displayStatus(result)
 
@@ -33,8 +41,23 @@ func prepare(args intf.Command, depType string) (result string, err error) {
 
 	app := parts[len(parts)-2]
 
+	targetDeployed := targetEnv + "/" + app
+
+	if depType == "*" {
+		statusCode, _, err := http.Get("/repository/ci/" + targetDeployed)
+		if err != nil {
+			return "error", err
+		} else if statusCode == 200 {
+			depType = "UPDATE"
+		} else if statusCode == 404 {
+			depType = "INITIAL"
+		} else {
+			return "error", errors.New("Unexpected http status code " + strconv.Itoa(statusCode) + " while checking the existance of " + targetDeployed)
+		}
+	}
+
 	deployedApplication := map[string]interface{}{
-		"-id": targetEnv + "/" + app,
+		"-id": targetDeployed,
 		"version": map[string]interface{}{
 			"-ref": appVersion,
 		},

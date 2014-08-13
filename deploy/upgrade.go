@@ -5,10 +5,10 @@ import (
 	"github.com/adriaandejonge/xld/util/intf"
 )
 
-var UpgradeCmd cmd.Option = cmd.Option{
-	Do:          upgrade,
-	Name:        "upgrade",
-	Description: "Updates an application deployment",
+var UpdateCmd cmd.Option = cmd.Option{
+	Do:          update,
+	Name:        "update",
+	Description: "Updates existing deployables in a deployment",
 	Permission: "deploy#upgrade",
 	MinArgs:    2,
 	Help: `
@@ -17,6 +17,6 @@ TODO:
 `,
 }
 
-func upgrade(args intf.Command) (result string, err error) {
+func update(args intf.Command) (result string, err error) {
 	return execute(args, "UPDATE")
 }

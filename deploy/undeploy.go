@@ -11,7 +11,7 @@ import (
 var UndeployCmd cmd.Option = cmd.Option{
 	Do:          undeploy,
 	Name:        "undeploy",
-	Description: "Uninstalls an application",
+	Description: "Uninstall an application",
 	Permission: "deploy#undeploy",
 	MinArgs:    1,
 	Help: `
