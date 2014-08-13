@@ -7,7 +7,7 @@ Provide login details for XL Deploy server. Credentials are stored base64 encode
 
 Usage:
 
- - xld login <server> <username> <password>
+ - xld login &lt;server&gt; &lt;username&gt; &lt;password&gt;
 
 Example:
 
@@ -20,9 +20,9 @@ Executes a deployment, either initial or update. If you need to make a distincti
 
 Usage:
 
- - xld deploy <app id> <env id>
+ - xld deploy &lt;app id&gt; &lt;env id&gt;
 
- - xld deploy <app id> <env id> -orchestrator <orchestrator(s)>
+ - xld deploy &lt;app id&gt; &lt;env id&gt; -orchestrator &lt;orchestrator(s)&gt;
 
 Examples:
 
@@ -37,7 +37,7 @@ Uninstall an application from a container.
 
 Usage:
 
- - xld undeploy <deployed app id>
+ - xld undeploy &lt;deployed app id&gt;
 
 Example:
 
@@ -51,9 +51,9 @@ Executes an initial deployment. This explicitly does *not* work for upgrade depl
 
 Usage:
 
- - xld initial <app id> <env id>
+ - xld initial &lt;app id&gt; &lt;env id&gt;
 
- - xld initial <app id> <env id> -orchestrator <orchestrator(s)>
+ - xld initial &lt;app id&gt; &lt;env id&gt; -orchestrator &lt;orchestrator(s)&gt;
 
 Examples:
 
@@ -68,7 +68,7 @@ Executes an update deployment. This explicitly does *not* work for initial deplo
 
 Usage:
 
- - xld update <app id> <env id>
+ - xld update &lt;app id&gt; &lt;env id&gt;
 
 Examples:
 
@@ -81,7 +81,7 @@ Show the steps for an initial deployment without executing. For execution, see x
 
 Usage:
 
- - xld plan-initial <app id> <env id>
+ - xld plan-initial &lt;app id&gt; &lt;env id&gt;
 
 Example:
 
@@ -94,7 +94,7 @@ Show the steps for an update deployment without executing. For execution, see xl
 
 Usage:
 
- - xld plan-update <app id> <env id>
+ - xld plan-update &lt;app id&gt; &lt;env id&gt;
 
 Example:
 
@@ -107,23 +107,23 @@ Create items in XL Deploy from command line.
 
 #### Basic usage:
 
-xld create <type> <id> -<key> <value(s)>...
+xld create &lt;type&gt; &lt;id&gt; -&lt;key&gt; &lt;value(s)&gt;...
 
 #### Advanced usage:
 
  - To enter key-value pairs, you can pipe JSON or CSV as input:
 
-	<output json map> | xld create <type> <id> -<key> stdin:json
+	&lt;output json map&gt; | xld create &lt;type&gt; &lt;id&gt; -&lt;key&gt; stdin:json
 
-	<ouput csv file> | xld create <type> <id> -<key> stdin:csv
+	&lt;ouput csv file&gt; | xld create &lt;type&gt; &lt;id&gt; -&lt;key&gt; stdin:csv
 
  - To enter the full content, you can pipe JSON:
 
-	<output json map> | xld create <type> <id> stdin
+	&lt;output json map&gt; | xld create &lt;type&gt; &lt;id&gt; stdin
 
  - To enter the full content, type and ID, you can pipe JSON:
 
-	<output json map> | xld create stdin
+	&lt;output json map&gt; | xld create stdin
 
 Examples:
 
@@ -179,16 +179,16 @@ Abbreviations
 
 XLD allows the following abbreviations for item types:
 
-env -> udm.Environment
-dict -> udm.Dictionary
-dir -> udm.Directory
+env -&gt; udm.Environment
+dict -&gt; udm.Dictionary
+dir -&gt; udm.Directory
 
 XLD allows the following abbreviations for ID paths:
 
-app -> Applications
-env -> Environments
-inf -> Infrastructure
-conf -> Configuration
+app -&gt; Applications
+env -&gt; Environments
+inf -&gt; Infrastructure
+conf -&gt; Configuration
 
 
 
@@ -198,7 +198,7 @@ Read a configuraton item from the repository and output JSON format.
 
 Usage:
 
-- xld read <id>
+- xld read &lt;id&gt;
 
 Examples:
 
@@ -225,7 +225,7 @@ Delete an item from the repository.
 
 Usage:
 
- - xld remove <item id(s)
+ - xld remove &lt;item id(s)
 
 Examples:
 
@@ -240,7 +240,7 @@ Search for items in the repository
 
 Usage:
 
- - xld list <item id> -type <type> -like <query> -before <time indication> -after <..> -page <##> -pagesize <##>
+ - xld list &lt;item id&gt; -type &lt;type&gt; -like &lt;query&gt; -before &lt;time indication&gt; -after &lt;..&gt; -page &lt;##&gt; -pagesize &lt;##&gt;
 
 Example:
 
@@ -263,7 +263,7 @@ Print properties and property type for item type(s).
 
 Usage:
 
- - xld describe <item type(s)
+ - xld describe &lt;item type(s)
 
 Examples:
 
