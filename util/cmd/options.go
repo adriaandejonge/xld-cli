@@ -31,6 +31,11 @@ func (optionList *OptionList) Finder() Finder {
 			return func(args intf.Command) (result string, err error) {
 				subs := args.Subs()
 				if len(subs) > 0 {
+					if subs[0] == "all" {
+						for _, el := range index {
+							fmt.Println(el.Help)
+						}
+					}
 
 					// TODO: Loop over multiple
 					// TODO: Loop over all
