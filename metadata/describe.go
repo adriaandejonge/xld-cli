@@ -13,8 +13,21 @@ var DescribeCmd cmd.Option = cmd.Option{
 	Permission: "",
 	MinArgs:    1,
 	Help: `
-TODO: 
-	Long, multi-line help text
+# XLD Describe: 
+
+Print properties and property type for item type(s).
+
+Usage:
+
+ - xld describe <item type(s)
+
+Examples:
+
+ - xld describe jee.War
+
+ - xld describe tomcat.Server udm.Directory
+
+ - xld describe $(xld types | grep tomcat)
 `,
 }
 

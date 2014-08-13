@@ -15,8 +15,17 @@ var TypesCmd cmd.Option = cmd.Option{
 	Permission: "",
 	MinArgs:    0,
 	Help: `
-TODO: 
-	Long, multi-line help text
+# XLD Types: 
+
+Prints the list of item types installed in the XL Deploy server you connected to
+
+Usage:
+ 
+ - xld types
+
+Examples
+
+ - xld types | grep tomcat
 `,
 }
 
