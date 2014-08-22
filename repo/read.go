@@ -42,22 +42,45 @@ You can also use the abbreviation "latest" to automatically find the newest vers
 }
 
 func read(args intf.Command) (result string, err error) {
+
+	resultMap, err := ReadAsMap(args)
+	if err != nil {
+		return "error", err
+	}
+	
+	json, err := json.MarshalIndent(resultMap, "", "    ")
+	if err != nil {
+		return "error", err
+	}
+
+	return string(json), err
+
+}
+
+func ReadAsMap(args intf.Command) (resultMap map[string]interface{}, err error) {
 	subs := args.Subs()
 
 	ci := AntiAbbreviate(subs[0])
 
 	body, err := http.Read("/repository/ci/" + ci)
+	if err != nil {
+		return
+	}
 
 	values, err := x2j.XmlToMap(body)
+	if err != nil {
+		return
+	}
+
 	cleanProperties := make(map[string]interface{})
-	resultMap := make(map[string]interface{})
+	resultMap = make(map[string]interface{})
 
 	for key, value := range values {
 		resultMap["type"] = key
 
 		ciType, err := metadata.Type(key)
 		if err != nil {
-			return "error", err
+			return nil, err
 		}
 
 		valueMap := value.(map[string]interface{})
@@ -70,16 +93,14 @@ func read(args intf.Command) (result string, err error) {
 			} else {
 				cleanProperties[k], err = readProperty(k, v, ciType)
 				if err != nil {
-					return "error", err
+					return nil, err
 				}
 			}
 		}
 	}
 
 	resultMap["content"] = cleanProperties
-	json, _ := json.MarshalIndent(resultMap, "", "    ")
-
-	return string(json), err
+	return resultMap, nil
 
 }
 

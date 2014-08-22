@@ -131,32 +131,9 @@ func create(args intf.Command) (result string, err error) {
 	for _, prop := range props {
 		key := prop.Name()
 
-		kind := ciType.Prop(key).Kind
-
-		if kind == "" {
-			return "error", errors.New("Unknown property type " + ciType.Type + "->" + key)
-		}
-
-		switch kind {
-
-		case "BOOLEAN", "INTEGER", "STRING", "ENUM":
-			mapProps[key] = prop.Value()
-
-		case "CI":
-			mapProps[key] = mapRef(prop.Value())
-
-		case "MAP_STRING_STRING":
-			mapProps[key] = mapStringString(prop.Map())
-
-		case "SET_OF_STRING", "LIST_OF_STRING":
-			mapProps[key] = mapSetOfStrings(prop.Values())
-
-		case "SET_OF_CI", "LIST_OF_CI":
-			mapProps[key] = mapSetOfCis(prop.Values())
-
-		default:
-			return "error", errors.New("Unknown property kind " + kind + " --> XLD server newer than client?")
-
+		mapProps[key], err = translateProp(ciType, prop)
+		if err != nil {
+			return
 		}
 	}
 
@@ -176,6 +153,37 @@ func create(args intf.Command) (result string, err error) {
 	body, err := http.Create("/repository/ci/"+id, bytes.NewBuffer(xml))
 
 	return string(body), err
+}
+
+func translateProp(ciType *metadata.CIType, prop intf.Argument) (result interface{}, err error) {
+	key := prop.Name()
+	kind := ciType.Prop(key).Kind
+
+	if kind == "" {
+		return "error", errors.New("Unknown property type " + ciType.Type + "->" + key)
+	}
+
+	switch kind {
+
+	case "BOOLEAN", "INTEGER", "STRING", "ENUM":
+		return prop.Value(), nil
+
+	case "CI":
+		return mapRef(prop.Value()), nil
+
+	case "MAP_STRING_STRING":
+		return mapStringString(prop.Map()), nil
+
+	case "SET_OF_STRING", "LIST_OF_STRING":
+		return mapSetOfStrings(prop.Values()), nil
+
+	case "SET_OF_CI", "LIST_OF_CI":
+		return mapSetOfCis(prop.Values()), nil
+
+	default:
+		return "error", errors.New("Unknown property kind " + kind + " --> XLD server newer than client?")
+
+	}
 }
 
 func mapStringString(kvPairs map[string]string) interface{} {
