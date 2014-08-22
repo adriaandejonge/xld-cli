@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"github.com/adriaandejonge/xld/util/intf"
 )
 
@@ -15,7 +16,26 @@ type (
 		arg  interface{}
 	}
 )
+/*
+func NewStdinCmd(main string, values map[string]interface{}) *StdinCmd {
+	return &StdinCmd{main, values}
+}*/
 
+func NewStdinCmd(main string, jsonStr string) (stdinCmd *StdinCmd, err error) {
+	if err != nil {
+		return nil, err
+	}
+
+	values := make(map[string]interface{})
+
+	err = json.Unmarshal([]byte(jsonStr), &values)
+	if err != nil {
+		return nil, err
+	}
+	
+	
+	return &StdinCmd{main, values}, nil
+}
 
 func (s *StdinCmd) Main() string {
 	return s.main

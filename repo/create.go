@@ -12,7 +12,7 @@ import (
 )
 
 var CreateCmd cmd.Option = cmd.Option{
-	Do:          create,
+	Do:          createOrModify,
 	Name:        "create",
 	Description: "Create new configuration item",
 	Permission:  "repo#edit",
@@ -110,7 +110,7 @@ conf -> Configuration
 `,
 }
 
-func create(args intf.Command) (result string, err error) {
+func createOrModify(args intf.Command) (result string, err error) {
 	subs := args.Subs()
 	typeName := subs[0]
 	ciName := subs[1]
@@ -150,9 +150,18 @@ func create(args intf.Command) (result string, err error) {
 	json, _ := j2x.MapToJson(final)
 	xml, _ := j2x.JsonToXml(json)
 
-	body, err := http.Create("/repository/ci/"+id, bytes.NewBuffer(xml))
+	
+	switch args.Main() {
+	case "create":
+		body, err := http.Create("/repository/ci/"+id, bytes.NewBuffer(xml))
+		return string(body), err
+	case "modify":
+		body, err := http.Update("/repository/ci/"+id, bytes.NewBuffer(xml))
+		return string(body), err
+	}
+	return "error", errors.New("Unknown command " + args.Main())
 
-	return string(body), err
+	
 }
 
 func translateProp(ciType *metadata.CIType, prop intf.Argument) (result interface{}, err error) {

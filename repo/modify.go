@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"strings"
-	"fmt" // DEBUG
 	"github.com/adriaandejonge/xld/util/cmd"
 	"github.com/adriaandejonge/xld/util/intf"
 	"github.com/adriaandejonge/xld/metadata"
@@ -85,14 +84,12 @@ func modify(args intf.Command) (result string, err error) {
 	}
 
 	json, err := json.MarshalIndent(resultMap, "", "    ")
+
+	createCmd, err := cmd.NewStdinCmd("modify", string(json))
 	if err != nil {
 		return "error", err
 	}
-
-	// SAVE MAP to HTTP
-
-	// TEMPORARILY
-	return string(json), nil
+	return createOrModify(createCmd)
 }
 
 func handleDefault(mapContent map[string]interface{}, key string, prop intf.Argument, ciType *metadata.CIType) error {
@@ -114,6 +111,7 @@ func handleDefault(mapContent map[string]interface{}, key string, prop intf.Argu
 func handleAddRemoveChange(mapContent map[string]interface{}, prefix string, key string, prop intf.Argument) error {
 	val := mapContent[key]
 
+	// ASSUMPTION: maps and lists are never empty in xld read
 	switch t := val.(type) {
 	case map[string]string:
 
@@ -133,7 +131,6 @@ func handleAddRemoveChange(mapContent map[string]interface{}, prefix string, key
 		case "add", "change":
 			for _, el := range prop.Values() {
 				t = append(t, el)
-				fmt.Println("Got a string array!", t)
 			}
 			mapContent[key] = t
 		case "remove":
