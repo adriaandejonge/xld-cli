@@ -154,10 +154,16 @@ func createOrModify(args intf.Command) (result string, err error) {
 	switch args.Main() {
 	case "create":
 		body, err := http.Create("/repository/ci/"+id, bytes.NewBuffer(xml))
-		return string(body), err
-	case "modify":
+		if err != nil {
+			return "error", err
+		}
+		return Xml2CleanJson(body)
+	case "modify-sub":
 		body, err := http.Update("/repository/ci/"+id, bytes.NewBuffer(xml))
-		return string(body), err
+		if err != nil {
+			return "error", err
+		}
+		return Xml2CleanJson(body)
 	}
 	return "error", errors.New("Unknown command " + args.Main())
 

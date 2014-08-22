@@ -42,10 +42,22 @@ func (s *StdinCmd) Main() string {
 }
 
 func (s *StdinCmd) Subs() []string {
-	return []string{
-		s.values["type"].(string),
-		s.values["id"].(string),
+	// TODO Do you want this knowledge here???
+	switch s.main {
+	case "create", "modify-sub":
+		return []string{
+			s.values["type"].(string),
+			s.values["id"].(string),
+		}
+	case "modify":
+		return []string{
+			s.values["id"].(string),
+		}
+	default:
+		// TODO Throw error: not supported
+		return make([]string, 0)
 	}
+
 }
 
 func (s *StdinCmd) Arguments() []intf.Argument {

@@ -67,6 +67,26 @@ func ReadAsMap(args intf.Command) (resultMap map[string]interface{}, err error) 
 		return
 	}
 
+	return xml2CleanMap(body)
+
+}
+
+func Xml2CleanJson(body []byte) (cleanJson string, err error) {
+	myMap, err := xml2CleanMap(body)
+	if err != nil {
+		return "error", err
+	}
+
+	json, err := json.MarshalIndent(myMap, "", "    ")
+	if err != nil {
+		return "error", err
+	}
+
+	return string(json), err
+
+}
+
+func xml2CleanMap(body []byte) (resultMap map[string]interface{}, err error) {
 	values, err := x2j.XmlToMap(body)
 	if err != nil {
 		return
@@ -101,7 +121,6 @@ func ReadAsMap(args intf.Command) (resultMap map[string]interface{}, err error) 
 
 	resultMap["content"] = cleanProperties
 	return resultMap, nil
-
 }
 
 func readProperty(key string, value interface{}, ciType *metadata.CIType) (result interface{}, err error) {

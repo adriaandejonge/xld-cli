@@ -85,7 +85,7 @@ func modify(args intf.Command) (result string, err error) {
 
 	json, err := json.MarshalIndent(resultMap, "", "    ")
 
-	createCmd, err := cmd.NewStdinCmd("modify", string(json))
+	createCmd, err := cmd.NewStdinCmd("modify-sub", string(json))
 	if err != nil {
 		return "error", err
 	}
