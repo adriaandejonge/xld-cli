@@ -16,7 +16,7 @@ var CreateCmd cmd.Option = cmd.Option{
 	Name:        "create",
 	Description: "Create new configuration item",
 	Permission:  "repo#edit",
-	MinArgs:     1,
+	MinArgs:     2,
 	Help: `
 # xld create <type> <id> -<key> <value(s)>...
 
