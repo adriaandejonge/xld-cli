@@ -77,6 +77,7 @@ func Xml2CleanJson(body []byte) (cleanJson string, err error) {
 	if err != nil {
 		return "error", err
 	}
+	delete(myMap, "token")
 
 	json, err := json.MarshalIndent(myMap, "", "    ")
 	if err != nil {
