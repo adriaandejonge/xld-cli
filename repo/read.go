@@ -47,6 +47,7 @@ func read(args intf.Command) (result string, err error) {
 	if err != nil {
 		return "error", err
 	}
+	delete(resultMap, "token")
 	
 	json, err := json.MarshalIndent(resultMap, "", "    ")
 	if err != nil {
