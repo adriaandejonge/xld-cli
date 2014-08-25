@@ -6,6 +6,7 @@ import (
 	"github.com/adriaandejonge/xld/deploy"
 	"github.com/adriaandejonge/xld/metadata"
 	"github.com/adriaandejonge/xld/repo"
+	"github.com/adriaandejonge/xld/security"
 	"os"
 
 	"github.com/adriaandejonge/xld/util/cmd"
@@ -28,6 +29,7 @@ var commands cmd.OptionList = cmd.OptionList{
 	repo.ListCmd,
 	metadata.DescribeCmd,
 	metadata.TypesCmd,
+	security.PermissionsCmd,
 }
 
 func main() {
