@@ -17,21 +17,17 @@ import (
 )
 
 func execute(args intf.Command, depType string) (result string, err error) {
-	fmt.Printf("1\n")
 	result, err = prepare(args, depType)
 	if err != nil {
 		return
 	}
-	fmt.Printf("2\n")
 
 	body, err := http.Create("/task/"+result+"/start", nil)
 	if err != nil {
 		return
 	}
-	fmt.Printf("3\n")
 
 	displayStatus(result)
-	fmt.Printf("4\n")
 	return string(body), err
 }
 
@@ -46,7 +42,6 @@ func prepare(args intf.Command, depType string) (result string, err error) {
 
 	targetDeployed := targetEnv + "/" + app
 
-	fmt.Printf("1.1\n")
 
 	if depType == "*" {
 		statusCode, _, err := http.Get("/repository/ci/" + targetDeployed)
@@ -60,8 +55,6 @@ func prepare(args intf.Command, depType string) (result string, err error) {
 			return "error", errors.New("Unexpected http status code " + strconv.Itoa(statusCode) + " while checking the existance of " + targetDeployed)
 		}
 	}
-
-	fmt.Printf("1.2\n")
 
 	deployedApplication := map[string]interface{}{
 		"-id": targetDeployed,
@@ -98,11 +91,8 @@ func prepare(args intf.Command, depType string) (result string, err error) {
 	if err != nil {
 		return "error", err
 	}
-	fmt.Printf("1.3\n")
 
 	body, err = http.Create("/deployment", bytes.NewBuffer(body))
-
-	fmt.Printf("1.4\n")
 
 	return string(body), err
 }
