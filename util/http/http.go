@@ -69,6 +69,9 @@ func doHttp(path string, method string, reader io.Reader) (statusCode int, body 
 	}
 
 	req.Header.Add("Authorization", "Basic "+loginData.Auth)
+
+	// TODO Make content type variable in HTTP util
+	req.Header.Add("Content-Type", "application/xml")
 	resp, err := client.Do(req)
 	if err != nil {
 		return
